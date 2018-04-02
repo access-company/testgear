@@ -1,0 +1,9 @@
+/_build
+/deps
+/cover
+/exdoc
+erl_crash.dump
+*.ez
+
+# Exact dependencies of testgear are determined per-solomon-instance so not globally shareable
+mix.lock

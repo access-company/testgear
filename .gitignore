@@ -4,4 +4,6 @@
 /exdoc
 erl_crash.dump
 *.ez
-mix.lock # Exact dependencies of testgear are determined per-solomon-instance so not globally shareable
+
+# Exact dependencies of testgear are determined per-solomon-instance so not globally shareable
+mix.lock

@@ -1,0 +1,32 @@
+%h2
+  = "foo bar #{x1}"
+.content
+  %h3 control structure: if
+    - if rem(x2, 2) == 0 do
+      = x3
+    - else
+      = x4
+
+  %h3 control structure: case
+    - case x5 do
+      - b when b > 10 ->
+        = b + 1
+      - _c ->
+        = x6
+
+  %h3 control structure: for expression
+    - for d <- x7 do
+      = d
+
+  %h3 variable module
+    = x8.to_string(10)
+
+  %h3 tuples in AST
+    = inspect({})
+    = inspect({x9})
+    = inspect({x9, x9})
+    = inspect({x9, x9, x9})
+
+  %h3 local variable
+    - e = x10 + 1
+    = e

@@ -1,0 +1,10 @@
+%h2{comment: "normal tag shouldn't be escaped <>"}
+  = "elixir literal should be escaped <>&'\""
+  = param
+  - local = param
+  .content{comment: "interpolated string should be escaped #{local}"}
+  - if byte_size(param) == 0 do
+    assuming param is nonempty string, this shouldn't appear; nor should "nil"
+  = raw "<raw content shouldn't be escaped>"
+  = 'charlist literal'
+  = String.to_charlist("dynamic charlist")

@@ -1,0 +1,5 @@
+.flash
+  - if flash["notice"] != nil do
+    = "flash_notice=#{flash["notice"]}"
+  - else
+    = "flash_notice=nil"

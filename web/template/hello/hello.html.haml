@@ -1,0 +1,7 @@
+- import Testgear.Gettext
+- for {headline, content} <- contents do
+  %h2
+    = "Headline: #{headline}"
+  .content
+    = content
+= gettext "Hello"

@@ -1,6 +1,6 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
-solomon_instance_dep = {:solomon_acs, [git: "git@github.com:access-company/solomon_acs.git"]}
+solomon_instance_dep = {:solomon, [git: "git@github.com:access-company/solomon.git"]}
 
 try do
   parent_dir_basename = Path.absname(__DIR__) |> Path.dirname() |> Path.basename()
@@ -13,12 +13,13 @@ try do
   Code.require_file(mix_common_file_path)
 
   defmodule Testgear.Mixfile do
-    use Solomon.GearProject
+    use Solomon.GearProject, [
+      solomon_instance_dep: solomon_instance_dep,
+    ]
 
-    defp gear_name()           , do: :testgear
-    defp version()             , do: "0.0.1"
-    defp gear_deps()           , do: []
-    # defp solomon_instance_dep(), do: unquote(solomon_instance_dep) # Not yet used from solomon's mix_common.exs
+    defp gear_name(), do: :testgear
+    defp version()  , do: "0.0.1"
+    defp gear_deps(), do: []
 
     # Note that we always put the following env vars regardless of `Mix.env()`, as they are not yet set by `Mix.Tasks.Test` task.
 

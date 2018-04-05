@@ -34,8 +34,9 @@ try do
 
   defmodule Testgear.Mixfile do
     use Solomon.GearProject, [
-      solomon_instance_dep: solomon_instance_dep,
-      source_url:           "https://github.com/access-company/testgear",
+      solomon_instance_dep:         solomon_instance_dep,
+      source_url:                   "https://github.com/access-company/testgear",
+      use_solomon_internal_module?: true,
     ]
 
     defp gear_name(), do: :testgear

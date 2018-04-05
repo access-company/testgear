@@ -21,7 +21,7 @@ To do so, you must supply `SOLOMON_INSTANCE_DEP` environment variable.
 It must declare dependency to your Solomon instance in the form of dependency tuple,
 just like you do in ordinary `mix.exs` file.
 
-Example sequence up to comlipation:
+Example sequence up to compilation:
 
 ```sh
 $ git clone https://github.com/access-company/testgear.git

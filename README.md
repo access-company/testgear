@@ -1,4 +1,4 @@
-testgear
+Testgear
 ========
 
 A gear application of [Solomon]. As the name suggests, used for testing [Solomon]'s core functionality.

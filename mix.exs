@@ -1,24 +1,46 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
-solomon_instance_dep = {:solomon_acs, [git: "git@github.com:access-company/solomon_acs.git"]}
+dep_env_var = "SOLOMON_INSTANCE_DEP"
+help_message = """
+#{dep_env_var} must be a proper mix dependency tuple! Example:
+
+{:your_solomon_instance, [git: "git@github.com:your_organization/your_solomon_instance.git"]}
+
+"""
+
+solomon_instance_dep =
+  case System.get_env(dep_env_var) do
+    nil           -> Mix.raise("You must supply #{dep_env_var} env var!")
+    non_nil_value ->
+      expression =
+        try do
+          {expression, _bindings} = Code.eval_string(non_nil_value)
+          expression
+        rescue
+          e ->
+            Mix.raise(Exception.message(e) <> "\n\n" <> help_message)
+        end
+      if is_tuple(expression), do: expression, else: Mix.raise(help_message)
+  end
 
 try do
-  parent_dir_basename = Path.absname(__DIR__) |> Path.dirname() |> Path.basename()
+  parent_dir = Path.expand("..", __DIR__)
   deps_dir =
-    case parent_dir_basename do
-      "deps" -> ".." # This gear is used by another gear as a gear dependency
-      _      -> "deps"
+    case Path.basename(parent_dir) do
+      "deps" -> parent_dir                 # this gear project is used by another gear as a gear dependency
+      _      -> Path.join(__DIR__, "deps") # this gear project is the toplevel mix project
     end
-  mix_common_file_path = Path.join([__DIR__, deps_dir, "solomon", "mix_common.exs"])
-  Code.require_file(mix_common_file_path)
+  Code.require_file(Path.join([deps_dir, "solomon", "mix_common.exs"]))
 
   defmodule Testgear.Mixfile do
-    use Solomon.GearProject
+    use Solomon.GearProject, [
+      solomon_instance_dep: solomon_instance_dep,
+      source_url:           "https://github.com/access-company/testgear",
+    ]
 
-    defp gear_name()           , do: :testgear
-    defp version()             , do: "0.0.1"
-    defp gear_deps()           , do: []
-    # defp solomon_instance_dep(), do: unquote(solomon_instance_dep) # Not yet used from solomon's mix_common.exs
+    defp gear_name(), do: :testgear
+    defp version()  , do: "0.0.1"
+    defp gear_deps(), do: []
 
     # Note that we always put the following env vars regardless of `Mix.env()`, as they are not yet set by `Mix.Tasks.Test` task.
 
@@ -29,7 +51,7 @@ try do
     System.put_env("GEAR_PROCESS_MAX_HEAP_SIZE", "5000000")
   end
 rescue
-  Code.LoadError ->
+  _any_error ->
     defmodule SolomonGearInitialSetup.Mixfile do
       use Mix.Project
 

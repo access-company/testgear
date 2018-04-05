@@ -5,7 +5,7 @@ A gear application of [Solomon]. As the name suggests, used for testing [Solomon
 
 [Solomon]: https://github.com/access-company/solomon
 
-testgear is:
+Testgear is:
 
 - installable to any [Solomon] instances
 - utilized in [upgrade compatibility test][uct]

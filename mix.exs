@@ -24,14 +24,13 @@ solomon_instance_dep =
   end
 
 try do
-  parent_dir_basename = Path.absname(__DIR__) |> Path.dirname() |> Path.basename()
+  parent_dir = Path.expand("..", __DIR__)
   deps_dir =
-    case parent_dir_basename do
-      "deps" -> ".." # This gear is used by another gear as a gear dependency
-      _      -> "deps"
+    case Path.basename(parent_dir) do
+      "deps" -> parent_dir                 # this gear project is used by another gear as a gear dependency
+      _      -> Path.join(__DIR__, "deps") # this gear project is the toplevel mix project
     end
-  mix_common_file_path = Path.join([__DIR__, deps_dir, "solomon", "mix_common.exs"])
-  Code.require_file(mix_common_file_path)
+  Code.require_file(Path.join([deps_dir, "solomon", "mix_common.exs"]))
 
   defmodule Testgear.Mixfile do
     use Solomon.GearProject, [
@@ -52,7 +51,7 @@ try do
     System.put_env("GEAR_PROCESS_MAX_HEAP_SIZE", "5000000")
   end
 rescue
-  Code.LoadError ->
+  _any_error ->
     defmodule SolomonGearInitialSetup.Mixfile do
       use Mix.Project
 

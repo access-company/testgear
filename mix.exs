@@ -2,27 +2,25 @@
 
 dep_env_var = "SOLOMON_INSTANCE_DEP"
 help_message = """
-You must supply a proper mix dependency tuple as a solomon_instance_dep!
-Example:
+#{dep_env_var} must be a proper mix dependency tuple! Example:
 
-    {:your_solomon_instance, [git: "git@github.com:your_organization/your_solomon_instance.git"]}
+{:your_solomon_instance, [git: "git@github.com:your_organization/your_solomon_instance.git"]}
 
 """
 
-solomon_instance_dep_from_string = fn string ->
-  try do
-    {expression, _bindings} = Code.eval_string(string)
-    if is_tuple(expression), do: expression, else: raise(help_message)
-  rescue
-    e ->
-      raise(Exception.message(e) <> "\n\n" <> help_message)
-  end
-end
-
 solomon_instance_dep =
   case System.get_env(dep_env_var) do
-    nil           -> raise("You must supply #{dep_env_var} env var!")
-    non_nil_value -> solomon_instance_dep_from_string.(non_nil_value)
+    nil           -> Mix.raise("You must supply #{dep_env_var} env var!")
+    non_nil_value ->
+      expression =
+        try do
+          {expression, _bindings} = Code.eval_string(non_nil_value)
+          expression
+        rescue
+          e ->
+            Mix.raise(Exception.message(e) <> "\n\n" <> help_message)
+        end
+      if is_tuple(expression), do: expression, else: Mix.raise(help_message)
   end
 
 try do

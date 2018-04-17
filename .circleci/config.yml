@@ -32,6 +32,10 @@ references:
     restore_cache:
         keys:
           - testgear-repo-{{ .Branch }}-{{ .Revision }}
+  edit_etc_hosts: &edit_etc_hosts
+    run:
+      name: Add testgear.localhost to /etc/hosts
+      command: echo '127.0.0.1 testgear.localhost' >> /etc/hosts
 
 jobs:
   prepare_elixir_and_testgear:
@@ -82,6 +86,7 @@ jobs:
       - *restore_asdf_directory
       - *enable_asdf_and_elixir
       - *restore_testgear_working_directory
+      - *edit_etc_hosts
       - run: mix test
   blackbox_test_erl20:
     <<: *container_config_erl20
@@ -91,9 +96,7 @@ jobs:
       - *restore_asdf_directory
       - *enable_asdf_and_elixir
       - *restore_testgear_working_directory
-      - run:
-          name: Add testgear.localhost to /etc/hosts
-          command: echo '127.0.0.1 testgear.localhost' >> /etc/hosts
+      - *edit_etc_hosts
       - run:
           name: Run testgear in background
           command: iex -S mix

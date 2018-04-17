@@ -28,7 +28,7 @@ references:
       command: |
         echo 'source /usr/local/asdf/asdf.sh' >> $BASH_ENV
         source $BASH_ENV
-  restore_testgear_working_directory:
+  restore_testgear_working_directory: &restore_testgear_working_directory
     restore_cache:
         keys:
           - testgear-repo-{{ .Branch }}-{{ .Revision }}

@@ -1,0 +1,123 @@
+version: 2
+
+# Note that each `run` command is executed by a separate bash process.
+# We have to use `$BASH_ENV`, which contains file path to `.bashrc` file, to pass information to the subsequent bash processes.
+references:
+  container_config_erl20: &container_config_erl20
+    docker:
+      - image: erlang:20.2.2 # Using pre-built official image since erlang installation takes long time
+        environment:
+          SOLOMON_INSTANCE_DEP: '{:solomon_instance_example, [git: "git@github.com:access-company/solomon_instance_example.git"]}'
+  install_prerequisites: &install_prerequisites
+    run:
+      name: Install required apt packages and generate locale
+      # Installing `locales` automatically triggers `locale-gen` once in postinstall step
+      command: |
+        echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
+        apt-get update && apt-get install -y unzip locales
+        echo 'export LANG=en_US.UTF-8' >> $BASH_ENV
+  restore_asdf_directory: &restore_asdf_directory
+    restore_cache:
+      keys:
+        - asdf_directory-{{ .Branch }}-{{ .Revision }}
+        - asdf_directory-{{ .Branch }}-
+        - asdf_directory-
+  enable_asdf_and_elixir: &enable_asdf_and_elixir
+    run:
+      name: Enable asdf and elixir by loading asdf.sh
+      command: |
+        echo 'source /usr/local/asdf/asdf.sh' >> $BASH_ENV
+        source $BASH_ENV
+  restore_testgear_working_directory:
+    restore_cache:
+        keys:
+          - testgear-repo-{{ .Branch }}-{{ .Revision }}
+
+jobs:
+  prepare_elixir_and_testgear:
+    <<: *container_config_erl20
+    working_directory: /tmp/testgear
+    steps:
+      - *install_prerequisites
+      - *restore_asdf_directory
+      - run:
+          name: Make sure asdf, elixir and local hex/rebar installed
+          command: |
+            [ -d /usr/local/asdf ] || git clone https://github.com/asdf-vm/asdf.git /usr/local/asdf --branch v0.4.3
+            echo 'source /usr/local/asdf/asdf.sh' >> $BASH_ENV
+            source $BASH_ENV
+            asdf plugin-add elixir || asdf plugin-update elixir
+            asdf install elixir 1.5.3
+            asdf global elixir 1.5.3
+            mix local.hex --force
+            mix local.rebar --force
+      - save_cache:
+          key: asdf_directory-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - /usr/local/asdf
+      - restore_cache:
+          keys:
+            - testgear-repo-{{ .Branch }}-{{ .Revision }}
+            - testgear-repo-{{ .Branch }}-
+      - checkout
+      - run:
+          name: Update deps with latest solomon_instance_example
+          # Compile at the end, in order to (a) include rebar3-generated files in cache, (b) reuse already compiled artifacts in later jobs
+          command: |
+            mix deps.update solomon_instance_example
+            mix deps.get || mix deps.get
+            mix deps.get
+            MIX_ENV=dev  mix compile
+            MIX_ENV=test mix compile
+      - save_cache:
+          key: testgear-repo-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .
+            - ~/.cache
+  whitebox_test_erl20:
+    <<: *container_config_erl20
+    working_directory: /tmp/testgear
+    steps:
+      - *install_prerequisites
+      - *restore_asdf_directory
+      - *enable_asdf_and_elixir
+      - *restore_testgear_working_directory
+      - run: mix test
+  blackbox_test_erl20:
+    <<: *container_config_erl20
+    working_directory: /tmp/testgear
+    steps:
+      - *install_prerequisites
+      - *restore_asdf_directory
+      - *enable_asdf_and_elixir
+      - *restore_testgear_working_directory
+      - run:
+          name: Add testgear.localhost to /etc/hosts
+          command: echo '127.0.0.1 testgear.localhost' >> /etc/hosts
+      - run:
+          name: Run testgear in background
+          command: iex -S mix
+          background: true
+      - run:
+          name: Wait until testgear starts (up to 30 seconds)
+          command: |
+            for _ in $(seq 1 30); do
+              if curl -s -o /dev/null http://testgear.localhost:8080; then
+                exit 0
+              fi
+              sleep 1
+            done
+            exit 1
+      - run: TEST_MODE=blackbox_local mix test
+
+workflows:
+  version: 2
+  testgear:
+    jobs:
+      - prepare_elixir_and_testgear
+      - whitebox_test_erl20:
+          requires:
+            - prepare_elixir_and_testgear
+      - blackbox_test_erl20:
+          requires:
+            - prepare_elixir_and_testgear

@@ -7,3 +7,6 @@ erl_crash.dump
 
 # Exact dependencies of testgear are determined per-solomon-instance so not globally shareable
 mix.lock
+
+# Persist SOLOMON_INSTANCE_DEP in local filesystem
+/.env

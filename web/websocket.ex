@@ -14,7 +14,7 @@ defmodule Testgear.Websocket do
     if Map.has_key?(request.query_params, "name") do
       conn
     else
-      put_status(conn, 400)
+      Conn.put_status(conn, 400)
     end
   end
 

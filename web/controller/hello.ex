@@ -7,7 +7,7 @@ defmodule Testgear.Controller.Hello do
   def html(conn) do
     Testgear.Gettext.put_locale(conn.request.query_params["locale"] || "en")
     args = [contents: [{"Headline 1", "Content 1"}, {"Headline 2", "Content 2"}]]
-    render(conn, 200, "hello/hello", args)
+    Conn.render(conn, 200, "hello/hello", args)
   end
 
   def var_bindings(conn) do
@@ -15,15 +15,15 @@ defmodule Testgear.Controller.Hello do
     args =
       [x1: "x1", x2: 10, x3: "x3", x4: "x4", x5: 5, x6: "x6", x7: [1, 2, 3], x8: Integer, x9: 9, x10: 10]
       |> Enum.filter(fn {k, _v} -> Map.has_key?(qs, Atom.to_string(k)) end)
-    render(conn, 200, "hello/var_bindings", args)
+    Conn.render(conn, 200, "hello/var_bindings", args)
   end
 
   def html_escaping(conn) do
-    render(conn, 200, "hello/html_escaping", [param: "<script>alert('hello')</script>"])
+    Conn.render(conn, 200, "hello/html_escaping", [param: "<script>alert('hello')</script>"])
   end
 
   def partial(conn) do
-    render(conn, 200, "hello/partial", [])
+    Conn.render(conn, 200, "hello/partial", [])
   end
 
   def json(%Conn{request: req, context: ctx} = conn) do
@@ -33,34 +33,34 @@ defmodule Testgear.Controller.Hello do
       |> Map.put(:start_time, Time.to_iso_timestamp(ctx.start_time))
       |> Map.put(:executor_pool_id, Tuple.to_list(ctx.executor_pool_id))
       |> Map.put(:gear_entry_point, Tuple.to_list(ctx.gear_entry_point))
-    json(conn, 200, %{request: req_map, context: ctx_map})
+    Conn.json(conn, 200, %{request: req_map, context: ctx_map})
   end
 
   def json_via_g2g(%Conn{request: req} = conn) do
     conn2 = %Conn{conn | request: %Request{req | path_info: ["json"]}}
     %G2gResponse{status: status, body: body} = Testgear.G2g.send(conn2)
-    json(conn, status, body)
+    Conn.json(conn, status, body)
   end
 
   def redirect(conn) do
-    url = get_req_query(conn, "url") || Testgear.Router.html_path()
-    redirect(conn, url)
+    url = Conn.get_req_query(conn, "url") || Testgear.Router.html_path()
+    Conn.redirect(conn, url)
   end
 
   def body_parser(%Conn{request: request} = conn) do
     content_type = request.headers["content-type"]
-    json(conn, 200, %{"content-type": content_type, body: request.body})
+    Conn.json(conn, 200, %{"content-type": content_type, body: request.body})
   end
 
   def path_matches(%Conn{request: request} = conn) do
     %SolomonLib.Request{path_matches: matches} = request
-    json(conn, 200, matches)
+    Conn.json(conn, 200, matches)
   end
 
   def camelized_header_key(conn) do
     conn
     |> Conn.put_resp_header("Camelized-Key", "Value")
-    |> json(200, %{})
+    |> Conn.json(200, %{})
   end
 
   def gzip_compressed(conn) do

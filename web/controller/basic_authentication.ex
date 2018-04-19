@@ -8,12 +8,12 @@ defmodule Testgear.Controller.BasicAuthentication do
   plug BAuth, :check_with_fun     , [mod: __MODULE__, fun: :check3], except: [:check_with_config]
 
   def check_with_config(conn) do
-    json(conn, 200, %{})
+    Conn.json(conn, 200, %{})
   end
 
   def check_with_fun(conn) do
     %Conn{assigns: %{foo: "foo"}} = conn # check that the value has been assigned
-    json(conn, 200, %{})
+    Conn.json(conn, 200, %{})
   end
 
   def check3(conn, "admin", "password") do

@@ -8,8 +8,8 @@ defmodule Testgear.Controller.ActionWithPlug do
   def plug1(conn, [option: s]) do
     Logger.info("should be able to emit log in plug")
     conn
-    |> assign(:already_called, s)
-    |> register_before_send(fn c ->
+    |> Conn.assign(:already_called, s)
+    |> Conn.register_before_send(fn c ->
       Logger.info("should be able to emit log in before_send callback")
       c
     end)
@@ -19,8 +19,8 @@ defmodule Testgear.Controller.ActionWithPlug do
     def plug2(conn, [option: s]) do
       %{already_called: "plug1"} = conn.assigns
       case conn.request.body["plug"] do
-        "proceed" -> put_resp_header(conn, "already_called", s)
-        "halt"    -> put_status(conn, 400)
+        "proceed" -> Conn.put_resp_header(conn, "already_called", s)
+        "halt"    -> Conn.put_status(conn, 400)
       end
     end
   end
@@ -45,13 +45,13 @@ defmodule Testgear.Controller.ActionWithPlug do
   def action1(conn) do
     %{already_called: "plug1"}     = conn.assigns
     %{"already_called" => "plug2"} = conn.resp_headers
-    json(conn, 200, %{msg: "OK"})
+    Conn.json(conn, 200, %{msg: "OK"})
   end
 
   def action2(conn) do
     %{already_called: "plug1"} = conn.assigns
     nil = conn.resp_headers["already_called"]
-    json(conn, 200, %{msg: "OK"})
+    Conn.json(conn, 200, %{msg: "OK"})
   end
 
   # testing error handling in plug execution
@@ -59,10 +59,10 @@ defmodule Testgear.Controller.ActionWithPlug do
   plug __MODULE__, :plug_before_send_error, [], except: [:action1, :action2, :action_plug_error                                ]
 
   def action_plug_error(conn) do
-    json(conn, 200, %{msg: "OK"})
+    Conn.json(conn, 200, %{msg: "OK"})
   end
 
   def action_plug_before_send_error(conn) do
-    json(conn, 200, %{msg: "OK"})
+    Conn.json(conn, 200, %{msg: "OK"})
   end
 end

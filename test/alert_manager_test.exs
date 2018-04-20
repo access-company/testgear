@@ -11,7 +11,7 @@ defmodule Testgear.AlertManagerTest do
   alias SolomonCore.Alert.Handler, as: AHandler
   alias SolomonCore.Alert.Handler.Email, as: EmailHandler
   alias SolomonCore.Alert.ErrorCountReporter
-  alias SolomonEal.AlertMailer.{Mail, MemoryInbox}
+  alias AntikytheraEal.AlertMailer.{Mail, MemoryInbox}
 
   defp which_handlers() do
     :gen_event.which_handlers(GearNManager)

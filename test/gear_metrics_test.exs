@@ -7,7 +7,7 @@ defmodule Testgear.GearMetricsTest do
   alias SolomonLib.Test.{ConnHelper, GenServerHelper}
   alias SolomonCore.Cluster.NodeId
   alias SolomonCore.ExecutorPool.RegisteredName, as: RegName
-  alias SolomonEal.MetricsStorage, as: Storage
+  alias AntikytheraEal.MetricsStorage, as: Storage
   alias Testgear.TestAsyncJob
 
   setup_all do

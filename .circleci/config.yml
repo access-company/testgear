@@ -7,7 +7,7 @@ references:
     docker:
       - image: erlang:20.2.2 # Using pre-built official image since erlang installation takes long time
         environment:
-          SOLOMON_INSTANCE_DEP: '{:solomon_instance_example, [git: "git@github.com:access-company/solomon_instance_example.git"]}'
+          SOLOMON_INSTANCE_DEP: '{:antikythera_instance_example, [git: "git@github.com:access-company/antikythera_instance_example.git"]}'
   install_prerequisites: &install_prerequisites
     run:
       name: Install required apt packages and generate locale
@@ -65,10 +65,10 @@ jobs:
             - testgear-repo-{{ .Branch }}-
       - checkout
       - run:
-          name: Update deps with latest solomon_instance_example
+          name: Update deps with latest antikythera_instance_example
           # Compile at the end, in order to (a) include rebar3-generated files in cache, (b) reuse already compiled artifacts in later jobs
           command: |
-            mix deps.update solomon_instance_example
+            mix deps.update antikythera_instance_example
             mix deps.get || mix deps.get
             mix deps.get
             MIX_ENV=dev  mix compile

@@ -7,10 +7,10 @@ defmodule Testgear.AlertManagerTest do
   alias SolomonLib.{Time, Test.GearLogHelper}
   alias SolomonCore.Ets.ConfigCache
   alias SolomonCore.Config.Gear, as: GearConfig
-  alias SolomonCore.Alert.Manager, as: CoreNManager
-  alias SolomonCore.Alert.Handler, as: AHandler
-  alias SolomonCore.Alert.Handler.Email, as: EmailHandler
-  alias SolomonCore.Alert.ErrorCountReporter
+  alias AntikytheraCore.Alert.Manager, as: CoreNManager
+  alias AntikytheraCore.Alert.Handler, as: AHandler
+  alias AntikytheraCore.Alert.Handler.Email, as: EmailHandler
+  alias AntikytheraCore.Alert.ErrorCountReporter
   alias AntikytheraEal.AlertMailer.{Mail, MemoryInbox}
 
   defp which_handlers() do

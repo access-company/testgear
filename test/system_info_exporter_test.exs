@@ -63,7 +63,7 @@ defmodule Testgear.SystemInfoExporterTest do
     # flush existing error counts
     t1 = Time.now() |> Time.truncate_to_minute() |> Time.shift_minutes(1)
     :meck.expect(Time, :now, fn -> t1 end)
-    send(SolomonCore.Alert.Manager, :error_count_reporter_timeout)
+    send(AntikytheraCore.Alert.Manager, :error_count_reporter_timeout)
     send(Testgear.AlertManager, :error_count_reporter_timeout)
     :timer.sleep(10)
     send(SolomonCore.ErrorCountsAccumulator, :beginning_of_minute)
@@ -74,7 +74,7 @@ defmodule Testgear.SystemInfoExporterTest do
     # solomon's error
     L.error("testing SystemInfoExporter")
     :timer.sleep(10)
-    send(SolomonCore.Alert.Manager, :error_count_reporter_timeout)
+    send(AntikytheraCore.Alert.Manager, :error_count_reporter_timeout)
     :timer.sleep(10)
 
     t2 = Time.shift_minutes(t1, 1)

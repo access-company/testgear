@@ -3,7 +3,7 @@ version: 2
 # Note that each `run` command is executed by a separate bash process.
 # We have to use `$BASH_ENV`, which contains file path to `.bashrc` file, to pass information to the subsequent bash processes.
 references:
-  container_config_erl20: &container_config_erl20
+  container_config: &container_config
     docker:
       - image: erlang:20.2.2 # Using pre-built official image since erlang installation takes long time
         environment:
@@ -39,7 +39,7 @@ references:
 
 jobs:
   prepare_elixir_and_testgear:
-    <<: *container_config_erl20
+    <<: *container_config
     working_directory: /tmp/testgear
     steps:
       - *install_prerequisites
@@ -78,8 +78,8 @@ jobs:
           paths:
             - .
             - ~/.cache
-  whitebox_test_erl20:
-    <<: *container_config_erl20
+  whitebox_test:
+    <<: *container_config
     working_directory: /tmp/testgear
     steps:
       - *install_prerequisites
@@ -88,8 +88,8 @@ jobs:
       - *restore_testgear_working_directory
       - *edit_etc_hosts
       - run: mix test
-  blackbox_test_erl20:
-    <<: *container_config_erl20
+  blackbox_test:
+    <<: *container_config
     working_directory: /tmp/testgear
     steps:
       - *install_prerequisites
@@ -118,9 +118,9 @@ workflows:
   testgear:
     jobs:
       - prepare_elixir_and_testgear
-      - whitebox_test_erl20:
+      - whitebox_test:
           requires:
             - prepare_elixir_and_testgear
-      - blackbox_test_erl20:
+      - blackbox_test:
           requires:
             - prepare_elixir_and_testgear

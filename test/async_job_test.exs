@@ -8,7 +8,7 @@ defmodule Testgear.AsyncJobTest do
   alias SolomonCore.ExecutorPool.Setting, as: EPoolSetting
   alias SolomonCore.ExecutorPool.RegisteredName, as: RegName
   alias SolomonCore.ExecutorPool.AsyncJobBroker, as: Broker
-  alias SolomonCore.AsyncJob.Queue
+  alias AntikytheraCore.AsyncJob.Queue
   alias Testgear.TestAsyncJob
 
   @epool_id {:gear, :testgear}

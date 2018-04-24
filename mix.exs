@@ -1,6 +1,6 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
-dep_env_var = "SOLOMON_INSTANCE_DEP"
+dep_env_var = "ANTIKYTHERA_INSTANCE_DEP"
 help_message = """
 #{dep_env_var} must be a proper mix dependency tuple! Example:
 

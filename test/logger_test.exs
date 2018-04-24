@@ -3,9 +3,9 @@
 defmodule Testgear.LoggerTest do
   use ExUnit.Case
   alias SolomonLib.Test.ProcessHelper
-  alias SolomonCore.Path, as: CorePath
-  alias SolomonCore.GearModule
-  alias SolomonCore.GearLog.Writer
+  alias AntikytheraCore.Path, as: CorePath
+  alias AntikytheraCore.GearModule
+  alias AntikytheraCore.GearLog.Writer
 
   defp find_log_files(dir) do
     uploaded = Path.wildcard(Path.join(dir, "testgear.log.*.uploaded.gz"))

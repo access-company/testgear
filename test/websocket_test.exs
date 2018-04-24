@@ -3,8 +3,8 @@
 defmodule Testgear.WebsocketTest do
   use ExUnit.Case
   alias SolomonLib.Test.ProcessHelper
-  alias SolomonCore.ExecutorPool.RegisteredName, as: RegName
-  alias SolomonCore.ExecutorPool.WebsocketConnectionsCounter
+  alias AntikytheraCore.ExecutorPool.RegisteredName, as: RegName
+  alias AntikytheraCore.ExecutorPool.WebsocketConnectionsCounter
 
   defp connect(name) do
     Socket.spawn_link("/ws?name=#{name}", 10_000)

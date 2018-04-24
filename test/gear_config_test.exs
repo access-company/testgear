@@ -2,8 +2,8 @@
 
 defmodule Testgear.GearConfigTest do
   use ExUnit.Case
-  alias SolomonCore.Ets.ConfigCache.Gear, as: Cache
-  alias SolomonCore.Config.Gear, as: GearConfig
+  alias AntikytheraCore.Ets.ConfigCache.Gear, as: Cache
+  alias AntikytheraCore.Config.Gear, as: GearConfig
 
   setup do
     current_config = Testgear.get_all_env()
@@ -28,6 +28,6 @@ defmodule Testgear.GearConfigTest do
     assert Testgear.get_env("baz"     ) == nil
     assert Testgear.get_env("baz", %{}) == %{}
 
-    :ets.delete_all_objects(SolomonCore.Ets.ConfigCache.table_name())
+    :ets.delete_all_objects(AntikytheraCore.Ets.ConfigCache.table_name())
   end
 end

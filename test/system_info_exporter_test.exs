@@ -4,8 +4,8 @@ defmodule Testgear.SystemInfoExporterTest do
   use ExUnit.Case
   alias SolomonLib.{Time, Httpc}
   alias SolomonLib.Test.GearLogHelper
-  alias SolomonCore.Handler.SystemInfoExporter.AccessToken
-  require SolomonCore.Logger, as: L
+  alias AntikytheraCore.Handler.SystemInfoExporter.AccessToken
+  require AntikytheraCore.Logger, as: L
 
   @base_url "http://localhost:#{SolomonLib.Env.port_to_listen()}"
 
@@ -66,7 +66,7 @@ defmodule Testgear.SystemInfoExporterTest do
     send(AntikytheraCore.Alert.Manager, :error_count_reporter_timeout)
     send(Testgear.AlertManager, :error_count_reporter_timeout)
     :timer.sleep(10)
-    send(SolomonCore.ErrorCountsAccumulator, :beginning_of_minute)
+    send(AntikytheraCore.ErrorCountsAccumulator, :beginning_of_minute)
     n_solomon  = send_request_and_sum_error_counts("solomon" )
     n_testgear = send_request_and_sum_error_counts("testgear")
     assert send_request_and_sum_error_counts("_total") == n_solomon + n_testgear
@@ -79,7 +79,7 @@ defmodule Testgear.SystemInfoExporterTest do
 
     t2 = Time.shift_minutes(t1, 1)
     :meck.expect(Time, :now, fn -> t2 end)
-    send(SolomonCore.ErrorCountsAccumulator, :beginning_of_minute)
+    send(AntikytheraCore.ErrorCountsAccumulator, :beginning_of_minute)
     assert send_request_and_sum_error_counts("solomon" ) == n_solomon + 1
     assert send_request_and_sum_error_counts("testgear") == n_testgear
     assert send_request_and_sum_error_counts("_total"  ) == n_solomon + n_testgear + 1
@@ -93,7 +93,7 @@ defmodule Testgear.SystemInfoExporterTest do
 
     t3 = Time.shift_minutes(t2, 1)
     :meck.expect(Time, :now, fn -> t3 end)
-    send(SolomonCore.ErrorCountsAccumulator, :beginning_of_minute)
+    send(AntikytheraCore.ErrorCountsAccumulator, :beginning_of_minute)
     assert send_request_and_sum_error_counts("solomon" ) == n_solomon + 1
     assert send_request_and_sum_error_counts("testgear") == n_testgear + 1
     assert send_request_and_sum_error_counts("_total"  ) == n_solomon + n_testgear + 2

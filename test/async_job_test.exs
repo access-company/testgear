@@ -4,10 +4,10 @@ defmodule Testgear.AsyncJobTest do
   use ExUnit.Case
   alias SolomonLib.{Time, Cron, AsyncJob}
   alias SolomonLib.Test.ProcessHelper
-  alias SolomonCore.{TerminationManager, ExecutorPool}
-  alias SolomonCore.ExecutorPool.Setting, as: EPoolSetting
-  alias SolomonCore.ExecutorPool.RegisteredName, as: RegName
-  alias SolomonCore.ExecutorPool.AsyncJobBroker, as: Broker
+  alias AntikytheraCore.{TerminationManager, ExecutorPool}
+  alias AntikytheraCore.ExecutorPool.Setting, as: EPoolSetting
+  alias AntikytheraCore.ExecutorPool.RegisteredName, as: RegName
+  alias AntikytheraCore.ExecutorPool.AsyncJobBroker, as: Broker
   alias AntikytheraCore.AsyncJob.Queue
   alias Testgear.TestAsyncJob
 
@@ -154,7 +154,7 @@ defmodule Testgear.AsyncJobTest do
   defp timed_job_starter_pid() do
     {_, pid, _, _} =
       Supervisor.which_children(RegName.supervisor(@epool_id))
-      |> Enum.find(&match?({SolomonCore.ExecutorPool.TimedJobStarter, _, :worker, _}, &1))
+      |> Enum.find(&match?({AntikytheraCore.ExecutorPool.TimedJobStarter, _, :worker, _}, &1))
     pid
   end
 

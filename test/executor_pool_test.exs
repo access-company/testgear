@@ -2,7 +2,7 @@
 
 defmodule Testgear.ExecutorPoolTest do
   use ExUnit.Case
-  alias SolomonCore.ExecutorPool.RegisteredName, as: RegName
+  alias AntikytheraCore.ExecutorPool.RegisteredName, as: RegName
 
   test "gear should start with its own ExecutorPool" do
     epool_id = {:gear, :testgear}

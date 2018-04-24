@@ -5,8 +5,8 @@ use Croma
 defmodule Testgear.AlertManagerTest do
   use Croma.TestCase, alias_as: GearNManager
   alias SolomonLib.{Time, Test.GearLogHelper}
-  alias SolomonCore.Ets.ConfigCache
-  alias SolomonCore.Config.Gear, as: GearConfig
+  alias AntikytheraCore.Ets.ConfigCache
+  alias AntikytheraCore.Config.Gear, as: GearConfig
   alias AntikytheraCore.Alert.Manager, as: CoreNManager
   alias AntikytheraCore.Alert.Handler, as: AHandler
   alias AntikytheraCore.Alert.Handler.Email, as: EmailHandler

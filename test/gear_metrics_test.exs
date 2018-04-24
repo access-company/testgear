@@ -5,8 +5,8 @@ defmodule Testgear.GearMetricsTest do
   alias SolomonLib.Time
   alias SolomonLib.G2gRequest, as: GReq
   alias SolomonLib.Test.{ConnHelper, GenServerHelper}
-  alias SolomonCore.Cluster.NodeId
-  alias SolomonCore.ExecutorPool.RegisteredName, as: RegName
+  alias AntikytheraCore.Cluster.NodeId
+  alias AntikytheraCore.ExecutorPool.RegisteredName, as: RegName
   alias AntikytheraEal.MetricsStorage, as: Storage
   alias Testgear.TestAsyncJob
 

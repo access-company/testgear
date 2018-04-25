@@ -12,7 +12,7 @@ defmodule Testgear.GearMetricsTest do
 
   setup_all do
     now = Time.now()
-    _ = Storage.Memory.download(:testgear, now, now) # ensure that the agent is started
+    _ = Storage.Memory.download(:testgear, {:gear, :testgear}, now, now) # ensure that the agent is started
   end
 
   setup do
@@ -39,9 +39,7 @@ defmodule Testgear.GearMetricsTest do
     f.()
 
     set_clock_ahead_and_force_flush(t3)
-    [{index_name, "testgear", doc}] = Storage.Memory.download(:testgear, t1, t2)
-    assert index_name =~ ~r/^metrics-\d\d\d\d\.\d\d\.\d\d$/
-
+    [{_time, doc}] = Storage.Memory.download(:testgear, {:gear, :testgear}, t1, t2)
     assert doc["node_id"     ] == NodeId.get()
     assert doc["otp_app_name"] == "testgear"
     assert doc["epool_id"    ] == "gear-testgear"

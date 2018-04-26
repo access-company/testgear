@@ -4,11 +4,11 @@ dep_env_var = "ANTIKYTHERA_INSTANCE_DEP"
 help_message = """
 #{dep_env_var} must be a proper mix dependency tuple! Example:
 
-{:your_solomon_instance, [git: "git@github.com:your_organization/your_solomon_instance.git"]}
+{:instance_name, [git: "git@github.com:your_organization/instance_name.git"]}
 
 """
 
-solomon_instance_dep =
+instance_dep =
   case System.get_env(dep_env_var) do
     nil           -> Mix.raise("You must supply #{dep_env_var} env var!")
     non_nil_value ->
@@ -34,7 +34,7 @@ try do
 
   defmodule Testgear.Mixfile do
     use Solomon.GearProject, [
-      solomon_instance_dep: solomon_instance_dep,
+      solomon_instance_dep: instance_dep,
       source_url:           "https://github.com/access-company/testgear",
     ]
 
@@ -58,7 +58,7 @@ rescue
       def project() do
         [
           app:  :just_to_fetch_solomon_instance_as_a_dependency,
-          deps: [unquote(solomon_instance_dep)],
+          deps: [unquote(instance_dep)],
         ]
       end
     end

@@ -42,3 +42,9 @@ When you run already compiled Testgear with your Solomon instance release (gener
 all necessary information are stored in `testgear.app` so the environment variable is no longer needed.
 
 [gr]: https://github.com/access-company/solomon/blob/master/core/mix/generate_release.ex
+
+## Copyright and License
+
+Copyright(c) 2015-2018 [ACCESS CO., LTD](https://www.access-company.com). All rights reserved.
+
+Antikythera source code is licensed under the [Apache License version 2.0](./LICENSE).

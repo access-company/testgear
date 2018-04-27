@@ -1,8 +1,8 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.BasicAuthentication do
-  use SolomonLib.Controller
-  alias SolomonLib.Plug.BasicAuthentication, as: BAuth
+  use Antikythera.Controller
+  alias Antikythera.Plug.BasicAuthentication, as: BAuth
 
   plug BAuth, :check_with_config  , []                             , except: [:check_with_fun   ]
   plug BAuth, :check_with_fun     , [mod: __MODULE__, fun: :check3], except: [:check_with_config]

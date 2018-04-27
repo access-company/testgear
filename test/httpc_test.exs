@@ -2,9 +2,9 @@
 
 defmodule Testgear.HttpcTest do
   use ExUnit.Case
-  alias SolomonLib.Httpc
+  alias Antikythera.Httpc
 
-  @base_url SolomonLib.Test.Config.base_url()
+  @base_url Antikythera.Test.Config.base_url()
 
   defp remove_extra_headers(res) do
     %Httpc.Response{res | headers: Map.drop(res.headers, ["date", "connection"])}

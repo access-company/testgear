@@ -2,9 +2,9 @@
 
 defmodule Testgear.GearMetricsTest do
   use ExUnit.Case
-  alias SolomonLib.Time
-  alias SolomonLib.G2gRequest, as: GReq
-  alias SolomonLib.Test.{ConnHelper, GenServerHelper}
+  alias Antikythera.Time
+  alias Antikythera.G2gRequest, as: GReq
+  alias Antikythera.Test.{ConnHelper, GenServerHelper}
   alias AntikytheraCore.Cluster.NodeId
   alias AntikytheraCore.ExecutorPool.RegisteredName, as: RegName
   alias AntikytheraEal.MetricsStorage, as: Storage

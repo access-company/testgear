@@ -2,7 +2,7 @@
 
 defmodule Testgear.StaticAssetTest do
   use ExUnit.Case
-  alias SolomonLib.Httpc
+  alias Antikythera.Httpc
   alias Testgear.Asset
 
   @test_html_basename "test.html"

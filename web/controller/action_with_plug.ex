@@ -1,8 +1,8 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.ActionWithPlug do
-  use SolomonLib.Controller
-  alias SolomonLib.Plug.NoCache
+  use Antikythera.Controller
+  alias Antikythera.Plug.NoCache
   alias Testgear.Logger
 
   def plug1(conn, [option: s]) do

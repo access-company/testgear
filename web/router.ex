@@ -1,7 +1,7 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Router do
-  use SolomonLib.Router
+  use Antikythera.Router
 
   static_prefix "/custom/static/path"
 

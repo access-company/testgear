@@ -4,7 +4,7 @@ defmodule Testgear.MalformedRequestTest do
   use ExUnit.Case
 
   defp run_curl(path_and_params, options) do
-    url = SolomonLib.Test.Config.base_url() <> path_and_params
+    url = Antikythera.Test.Config.base_url() <> path_and_params
     {output, 0} = System.cmd("curl", options ++ ["-s", "-o", "/dev/null", "-w", "%{http_code}", url])
     String.to_integer(output)
   end

@@ -3,8 +3,8 @@
 use Croma
 
 defmodule Testgear do
-  use SolomonLib.GearApplication
-  alias SolomonLib.{ExecutorPool, Conn}
+  use Antikythera.GearApplication
+  alias Antikythera.{ExecutorPool, Conn}
 
   defun children() :: [Supervisor.Spec.spec] do
     [

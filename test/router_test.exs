@@ -2,8 +2,8 @@
 
 defmodule Testgear.RouterTest do
   use Croma.TestCase
-  alias SolomonLib.G2gRequest
-  alias SolomonLib.Test.ConnHelper
+  alias Antikythera.G2gRequest
+  alias Antikythera.Test.ConnHelper
 
   defp e(s), do: URI.encode_www_form(s)
 

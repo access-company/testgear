@@ -2,7 +2,7 @@
 
 defmodule Testgear.PlugTest do
   use ExUnit.Case
-  alias SolomonLib.G2gRequest, as: GReq
+  alias Antikythera.G2gRequest, as: GReq
 
   @triplets [
     {"/action1_with_plug", %{"plug" => "proceed"}, 200, Poison.encode!(%{msg: "OK"})},
@@ -29,7 +29,7 @@ defmodule Testgear.PlugTest do
     end)
   end
 
-  @context SolomonLib.Test.ConnHelper.make_conn().context
+  @context Antikythera.Test.ConnHelper.make_conn().context
 
   defp g2g_post_json(path, body) do
     GReq.new!([method: :post, path: path, body: body]) |> Testgear.G2g.send(@context)
@@ -58,7 +58,7 @@ defmodule Testgear.PlugTest do
   test "NoCache should set cache-control response header" do
     res1 = Req.post_json("/action1_with_plug", %{"plug" => "proceed"})
     assert res1.status == 200
-    assert res1.headers["cache-control"] == SolomonLib.Plug.NoCache.header_value()
+    assert res1.headers["cache-control"] == Antikythera.Plug.NoCache.header_value()
 
     res2 = Req.post_json("/action2_with_plug", %{})
     assert res2.status == 200

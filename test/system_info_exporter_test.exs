@@ -2,12 +2,12 @@
 
 defmodule Testgear.SystemInfoExporterTest do
   use ExUnit.Case
-  alias SolomonLib.{Time, Httpc}
-  alias SolomonLib.Test.GearLogHelper
+  alias Antikythera.{Time, Httpc}
+  alias Antikythera.Test.GearLogHelper
   alias AntikytheraCore.Handler.SystemInfoExporter.AccessToken
   require AntikytheraCore.Logger, as: L
 
-  @base_url "http://localhost:#{SolomonLib.Env.port_to_listen()}"
+  @base_url "http://localhost:#{Antikythera.Env.port_to_listen()}"
 
   setup do
     :meck.new(Time, [:passthrough])
@@ -18,7 +18,7 @@ defmodule Testgear.SystemInfoExporterTest do
     [
       "/versions",
       "/error_count/_total",
-      "/error_count/solomon",
+      "/error_count/antikythera",
     ] |> Enum.each(fn path ->
       res = Httpc.get!(@base_url <> path)
       assert res.status == 404
@@ -67,11 +67,11 @@ defmodule Testgear.SystemInfoExporterTest do
     send(Testgear.AlertManager, :error_count_reporter_timeout)
     :timer.sleep(10)
     send(AntikytheraCore.ErrorCountsAccumulator, :beginning_of_minute)
-    n_solomon  = send_request_and_sum_error_counts("solomon" )
-    n_testgear = send_request_and_sum_error_counts("testgear")
-    assert send_request_and_sum_error_counts("_total") == n_solomon + n_testgear
+    n_antikythera = send_request_and_sum_error_counts("antikythera")
+    n_testgear    = send_request_and_sum_error_counts("testgear"   )
+    assert send_request_and_sum_error_counts("_total") == n_antikythera + n_testgear
 
-    # solomon's error
+    # antikythera's error
     L.error("testing SystemInfoExporter")
     :timer.sleep(10)
     send(AntikytheraCore.Alert.Manager, :error_count_reporter_timeout)
@@ -80,9 +80,9 @@ defmodule Testgear.SystemInfoExporterTest do
     t2 = Time.shift_minutes(t1, 1)
     :meck.expect(Time, :now, fn -> t2 end)
     send(AntikytheraCore.ErrorCountsAccumulator, :beginning_of_minute)
-    assert send_request_and_sum_error_counts("solomon" ) == n_solomon + 1
-    assert send_request_and_sum_error_counts("testgear") == n_testgear
-    assert send_request_and_sum_error_counts("_total"  ) == n_solomon + n_testgear + 1
+    assert send_request_and_sum_error_counts("antikythera") == n_antikythera + 1
+    assert send_request_and_sum_error_counts("testgear"   ) == n_testgear
+    assert send_request_and_sum_error_counts("_total"     ) == n_antikythera + n_testgear + 1
 
     # testgear's error
     GearLogHelper.set_context_id()
@@ -94,8 +94,8 @@ defmodule Testgear.SystemInfoExporterTest do
     t3 = Time.shift_minutes(t2, 1)
     :meck.expect(Time, :now, fn -> t3 end)
     send(AntikytheraCore.ErrorCountsAccumulator, :beginning_of_minute)
-    assert send_request_and_sum_error_counts("solomon" ) == n_solomon + 1
-    assert send_request_and_sum_error_counts("testgear") == n_testgear + 1
-    assert send_request_and_sum_error_counts("_total"  ) == n_solomon + n_testgear + 2
+    assert send_request_and_sum_error_counts("antikythera") == n_antikythera + 1
+    assert send_request_and_sum_error_counts("testgear"   ) == n_testgear + 1
+    assert send_request_and_sum_error_counts("_total"     ) == n_antikythera + n_testgear + 2
   end
 end

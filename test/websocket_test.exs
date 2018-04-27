@@ -2,7 +2,7 @@
 
 defmodule Testgear.WebsocketTest do
   use ExUnit.Case
-  alias SolomonLib.Test.ProcessHelper
+  alias Antikythera.Test.ProcessHelper
   alias AntikytheraCore.ExecutorPool.RegisteredName, as: RegName
   alias AntikytheraCore.ExecutorPool.WebsocketConnectionsCounter
 

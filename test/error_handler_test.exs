@@ -2,7 +2,7 @@
 
 defmodule Testgear.ErrorHandlerTest do
   use ExUnit.Case
-  alias SolomonLib.Test.ConnHelper
+  alias Antikythera.Test.ConnHelper
 
   @custom_error_body %{"from" => "custom_error_handler"}
 

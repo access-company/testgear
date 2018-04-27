@@ -1,7 +1,7 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.Cookie do
-  use SolomonLib.Controller
+  use Antikythera.Controller
 
   def show(conn) do
     body =
@@ -12,7 +12,7 @@ defmodule Testgear.Controller.Cookie do
     Conn.json(conn, 200, body)
   end
 
-  def create(%SolomonLib.Conn{request: request} = conn) do
+  def create(%Antikythera.Conn{request: request} = conn) do
     Enum.reduce(request.body, conn, fn {k, v}, c -> Conn.put_resp_cookie(c, k, v) end)
     |> Conn.json(200, request.body)
   end

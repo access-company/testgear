@@ -3,8 +3,8 @@
 use Croma
 
 defmodule Testgear.Websocket do
-  use SolomonLib.Websocket
-  alias SolomonLib.Registry.Unique
+  use Antikythera.Websocket
+  alias Antikythera.Registry.Unique
   alias Testgear.{Logger, Util}
 
   plug __MODULE__, :reject_request_without_name_parameter, []

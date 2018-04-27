@@ -3,7 +3,7 @@
 use Croma
 
 defmodule Testgear.Gettext do
-  use SolomonLib.Gettext, otp_app: :testgear
+  use Antikythera.Gettext, otp_app: :testgear
 
   defun put_locale(locale :: v[String.t]) :: nil do
     Gettext.put_locale(__MODULE__, locale)

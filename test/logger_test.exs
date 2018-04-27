@@ -2,7 +2,7 @@
 
 defmodule Testgear.LoggerTest do
   use ExUnit.Case
-  alias SolomonLib.Test.ProcessHelper
+  alias Antikythera.Test.ProcessHelper
   alias AntikytheraCore.Path, as: CorePath
   alias AntikytheraCore.GearModule
   alias AntikytheraCore.GearLog.Writer

@@ -1,10 +1,10 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.Flash do
-  use SolomonLib.Controller
+  use Antikythera.Controller
 
-  plug SolomonLib.Plug.Session, :load, [key: "session", store: :cookie]
-  plug SolomonLib.Plug.Flash,   :load, []
+  plug Antikythera.Plug.Session, :load, [key: "session", store: :cookie]
+  plug Antikythera.Plug.Flash,   :load, []
 
   def show(conn), do: Conn.render(conn, 200, "flash", [])
 

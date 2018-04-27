@@ -8,7 +8,7 @@ defmodule Testgear.GearConfigTest do
   setup do
     current_config = Testgear.get_all_env()
     on_exit(fn ->
-      SolomonLib.Test.GearConfigHelper.set_config(current_config)
+      Antikythera.Test.GearConfigHelper.set_config(current_config)
       System.delete_env("LOG_LEVEL")
     end)
   end

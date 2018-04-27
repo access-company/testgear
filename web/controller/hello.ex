@@ -1,8 +1,8 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.Hello do
-  use SolomonLib.Controller
-  alias SolomonLib.{Time, Request, G2gResponse}
+  use Antikythera.Controller
+  alias Antikythera.{Time, Request, G2gResponse}
 
   def html(conn) do
     Testgear.Gettext.put_locale(conn.request.query_params["locale"] || "en")
@@ -53,7 +53,7 @@ defmodule Testgear.Controller.Hello do
   end
 
   def path_matches(%Conn{request: request} = conn) do
-    %SolomonLib.Request{path_matches: matches} = request
+    %Antikythera.Request{path_matches: matches} = request
     Conn.json(conn, 200, matches)
   end
 

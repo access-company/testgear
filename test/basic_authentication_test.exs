@@ -2,7 +2,7 @@
 
 defmodule Testgear.BasicAuthenticationTest do
   use ExUnit.Case
-  alias SolomonLib.Httpc
+  alias Antikythera.Httpc
 
   @path_list ["/basic_authentication_with_config", "/basic_authentication_with_fun"]
 

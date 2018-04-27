@@ -1,7 +1,7 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.Reporting do
-  use SolomonLib.Controller
+  use Antikythera.Controller
 
   def log(conn) do
     Testgear.Logger.info("report log")

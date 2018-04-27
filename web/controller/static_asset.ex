@@ -1,12 +1,12 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.StaticAsset do
-  use SolomonLib.Controller
-  alias SolomonLib.MapUtil
+  use Antikythera.Controller
+  alias Antikythera.MapUtil
   alias Testgear.Asset
 
   def send_priv_file(%Conn{request: request} = conn) do
-    %SolomonLib.Request{path_matches: matches} = request
+    %Antikythera.Request{path_matches: matches} = request
     Conn.send_priv_file(conn, 200, "static/" <> matches[:file])
   end
 
@@ -19,7 +19,7 @@ defmodule Testgear.Controller.StaticAsset do
     if String.starts_with?(url, "http") do
       url
     else
-      SolomonLib.Env.default_base_url(:testgear) <> url
+      Antikythera.Env.default_base_url(:testgear) <> url
     end
   end
 end

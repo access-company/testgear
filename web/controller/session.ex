@@ -1,9 +1,9 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.Controller.Session do
-  use SolomonLib.Controller
+  use Antikythera.Controller
 
-  plug SolomonLib.Plug.Session, :load, [key: "session"]
+  plug Antikythera.Plug.Session, :load, [key: "session"]
 
   def show(conn) do
     body =
@@ -14,7 +14,7 @@ defmodule Testgear.Controller.Session do
     Conn.json(conn, 200, body)
   end
 
-  def create(%SolomonLib.Conn{request: request} = conn) do
+  def create(%Antikythera.Conn{request: request} = conn) do
     Enum.reduce(request.body, conn, fn
       ({k, nil}, c) -> Conn.delete_session(c, k)
       ({k, v  }, c) -> Conn.put_session(c, k, v)

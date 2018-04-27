@@ -1,9 +1,9 @@
 # Copyright(c) 2015-2018 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.TestAsyncJob do
-  use SolomonLib.AsyncJob
-  alias SolomonLib.Context
-  alias SolomonLib.AsyncJob.Metadata
+  use Antikythera.AsyncJob
+  alias Antikythera.Context
+  alias Antikythera.AsyncJob.Metadata
   alias Testgear.{Logger, Util}
 
   @impl true

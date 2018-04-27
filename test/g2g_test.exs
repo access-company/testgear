@@ -2,11 +2,11 @@
 
 defmodule Testgear.G2gTest do
   use   ExUnit.Case
-  alias SolomonLib.Http.SetCookie
-  alias SolomonLib.G2gRequest , as: GReq
-  alias SolomonLib.G2gResponse, as: GRes
+  alias Antikythera.Http.SetCookie
+  alias Antikythera.G2gRequest , as: GReq
+  alias Antikythera.G2gResponse, as: GRes
 
-  @context SolomonLib.Test.ConnHelper.make_conn(%{sender: {:gear, :sender_gear}, gear_name: :sender_gear}).context
+  @context Antikythera.Test.ConnHelper.make_conn(%{sender: {:gear, :sender_gear}, gear_name: :sender_gear}).context
 
   test "gear client should request with specified params" do
     path    = "/foo/hoge/bar/wildcard"
@@ -21,7 +21,7 @@ defmodule Testgear.G2gTest do
     assert res1.cookies == %{}
     assert Map.keys(res1.body) |> Enum.sort() == expected_body_keys
 
-    conn = SolomonLib.Test.ConnHelper.make_conn(%{
+    conn = Antikythera.Test.ConnHelper.make_conn(%{
       method:       :get,
       path_info:    ["foo", "hoge", "bar", "wildcard"],
       query_params: qparams,
@@ -118,7 +118,7 @@ defmodule Testgear.G2gTest do
 
   test "header key should be downcased" do
     req = GReq.new!([method: :get, path: "/camelized_header_key"])
-    %SolomonLib.G2gResponse{headers: headers} = Testgear.G2g.send(req, @context)
+    %Antikythera.G2gResponse{headers: headers} = Testgear.G2g.send(req, @context)
     assert headers == %{"camelized-key" => "Value", "content-type" => "application/json"}
   end
 

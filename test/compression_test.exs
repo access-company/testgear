@@ -2,7 +2,7 @@
 
 defmodule Testgear.CompressionTest do
   use ExUnit.Case
-  alias SolomonLib.Httpc.Response, as: Res
+  alias Antikythera.Httpc.Response, as: Res
 
   test "cowboy should compress controller-generated response bodies when requested" do
     examples =

@@ -2,9 +2,9 @@
 
 defmodule Testgear.SessionTest do
   use ExUnit.Case
-  alias SolomonLib.G2gRequest, as: GR
+  alias Antikythera.G2gRequest, as: GR
 
-  @g2g_context SolomonLib.Test.ConnHelper.make_conn(%{sender: {:gear, :sender_gear}, gear_name: :sender_gear}).context
+  @g2g_context Antikythera.Test.ConnHelper.make_conn(%{sender: {:gear, :sender_gear}, gear_name: :sender_gear}).context
 
   test "session should return nil if session is not created" do
     res      = Req.get("/session?key=key")

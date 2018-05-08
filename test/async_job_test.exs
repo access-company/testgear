@@ -30,12 +30,16 @@ defmodule Testgear.AsyncJobTest do
     broker_pid
   end
 
+  defp confirm_that_broker_is_active(broker) do
+    if :sys.get_state(broker).phase != :active do
+      :timer.sleep(500) # if not yet ready it should soon become :active
+      assert :sys.get_state(broker).phase == :active
+    end
+  end
+
   test "broker should (eventually) become active and register its pid to TerminationManager" do
     broker_pid = get_broker_pid()
-    if :sys.get_state(broker_pid).phase != :active do
-      :timer.sleep(500) # if not yet ready it should soon become :active
-      assert :sys.get_state(broker_pid).phase == :active
-    end
+    confirm_that_broker_is_active(broker_pid)
     %{brokers: brokers} = :sys.get_state(TerminationManager)
     assert broker_pid in brokers
   end
@@ -44,11 +48,13 @@ defmodule Testgear.AsyncJobTest do
     queue_name = RegName.async_job_queue(@epool_id)
     :timer.sleep(20) # wait for startup of the broker (if not yet finished)
     broker1 = get_broker_pid()
+    confirm_that_broker_is_active(broker1)
     {:ok, q1} = RaftFleet.query(queue_name, :get)
     assert q1.brokers_waiting == [broker1]
     Process.exit(broker1, :kill)
     :timer.sleep(50) # wait for supervisor restart and startup of the new broker
     broker2 = get_broker_pid()
+    confirm_that_broker_is_active(broker2)
     {:ok, q3} = RaftFleet.query(queue_name, :get)
     assert q3.brokers_waiting == [broker2]
   end

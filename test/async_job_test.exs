@@ -3,7 +3,7 @@
 defmodule Testgear.AsyncJobTest do
   use ExUnit.Case
   alias Antikythera.{Time, Cron, AsyncJob}
-  alias Antikythera.Test.ProcessHelper
+  alias Antikythera.Test.{ProcessHelper, AsyncJobHelper}
   alias AntikytheraCore.{TerminationManager, ExecutorPool}
   alias AntikytheraCore.ExecutorPool.Setting, as: EPoolSetting
   alias AntikytheraCore.ExecutorPool.RegisteredName, as: RegName
@@ -14,6 +14,7 @@ defmodule Testgear.AsyncJobTest do
   @epool_id {:gear, :testgear}
 
   setup do
+    AsyncJobHelper.reset_rate_limit_status(@epool_id)
     Process.register(self(), TestAsyncJob)
     :ok
   end

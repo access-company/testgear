@@ -4,7 +4,7 @@ dep_env_var = "ANTIKYTHERA_INSTANCE_DEP"
 help_message = """
 #{dep_env_var} must be a proper mix dependency tuple! Example:
 
-{:instance_name, [git: "git@github.com:your_organization/instance_name.git"]}
+{:instance_name, [git: "git@github.com:your_organization/antikythera_instance_name.git"]}
 
 """
 
@@ -35,7 +35,7 @@ try do
   defmodule Testgear.Mixfile do
     use Antikythera.GearProject, [
       antikythera_instance_dep: instance_dep,
-      source_url:           "https://github.com/access-company/testgear",
+      source_url:               "https://github.com/access-company/testgear",
     ]
 
     defp gear_name(), do: :testgear

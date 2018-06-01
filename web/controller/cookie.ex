@@ -13,7 +13,9 @@ defmodule Testgear.Controller.Cookie do
   end
 
   def create(%Antikythera.Conn{request: request} = conn) do
-    Enum.reduce(request.body, conn, fn {k, v}, c -> Conn.put_resp_cookie(c, k, v) end)
+    request.body
+    |> Enum.filter(fn {_, v} -> is_binary(v) end)
+    |> Enum.reduce(conn, fn({k, v}, c) -> Conn.put_resp_cookie(c, k, v) end)
     |> Conn.json(200, request.body)
   end
 

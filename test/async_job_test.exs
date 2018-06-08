@@ -36,6 +36,7 @@ defmodule Testgear.AsyncJobTest do
       :timer.sleep(500) # if not yet ready it should soon become :active
       assert :sys.get_state(broker).phase == :active
     end
+    :timer.sleep(50) # wait for the 1st :polling_timeout in the broker process
   end
 
   test "broker should (eventually) become active and register its pid to TerminationManager" do

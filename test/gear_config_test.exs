@@ -8,7 +8,6 @@ defmodule Testgear.GearConfigTest do
     current_config = Testgear.get_all_env()
     on_exit(fn ->
       GearConfigHelper.set_config(current_config)
-      System.delete_env("LOG_LEVEL")
     end)
   end
 

@@ -68,4 +68,6 @@ defmodule Testgear.Router do
   get "/timeout"            , Error, :action_timeout
   get "/incorrect_return"   , Error, :incorrect_return
   get "/exhaust_heap_memory", Error, :exhaust_heap_memory
+
+  get "/config_cache", ConfigCache, :check
 end

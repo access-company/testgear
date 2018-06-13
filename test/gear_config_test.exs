@@ -2,6 +2,7 @@
 
 defmodule Testgear.GearConfigTest do
   use ExUnit.Case
+  alias Antikythera.Httpc
   alias Antikythera.Test.GearConfigHelper
 
   setup do
@@ -29,6 +30,19 @@ defmodule Testgear.GearConfigTest do
     assert      Testgear.get_env("baz"     ) == nil
     assert      Testgear.get_env("baz", %{}) == %{}
     catch_error Testgear.get_env!("baz")
+
+    :ets.delete_all_objects(AntikytheraCore.Ets.ConfigCache.table_name())
+  end
+
+  test "should not reflect changes in gear configs while handling web requests" do
+    config = %{"foo" => 1, "bar" => %{"nested" => "map"}}
+    assert GearConfigHelper.set_config(config) == :ok
+
+    %Httpc.Response{status: status, body: body} = Req.get("/config_cache")
+    %{"before" => config_before, "after" => config_after} = Poison.decode!(body)
+    assert status == 200
+    assert config == config_before
+    assert config == config_after
 
     :ets.delete_all_objects(AntikytheraCore.Ets.ConfigCache.table_name())
   end

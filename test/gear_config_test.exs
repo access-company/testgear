@@ -10,6 +10,7 @@ defmodule Testgear.GearConfigTest do
   setup do
     current_config = Testgear.get_all_env()
     on_exit(fn ->
+      :ets.delete_all_objects(AntikytheraCore.Ets.ConfigCache.table_name())
       GearConfigHelper.set_config(current_config)
     end)
   end
@@ -32,8 +33,6 @@ defmodule Testgear.GearConfigTest do
     assert      Testgear.get_env("baz"     ) == nil
     assert      Testgear.get_env("baz", %{}) == %{}
     catch_error Testgear.get_env!("baz")
-
-    :ets.delete_all_objects(AntikytheraCore.Ets.ConfigCache.table_name())
   end
 
   test "should not reflect changes in gear configs while handling web requests" do
@@ -45,22 +44,17 @@ defmodule Testgear.GearConfigTest do
       res = Req.get("/config_cache")
       send(:test_runner, {:received_response, res})
     end)
-    receive do
-      {:finished_fetching_gear_config, caller} ->
-        set_gear_config_only_in_ets(%{"foo" => "not_to_be_cached"})
-        send(caller, :gear_config_changed)
-    end
-    receive do
-      {:received_response, res} ->
-        %Httpc.Response{status: status, body: body} = res
-        %{"before" => config_before, "after" => config_after} = Poison.decode!(body)
-        assert status == 200
-        assert config == config_before
-        assert config == config_after
-    end
 
-    Process.unregister(:test_runner)
-    :ets.delete_all_objects(AntikytheraCore.Ets.ConfigCache.table_name())
+    assert_receive({:finished_fetching_gear_config, handler_pid}, 5_000)
+    set_gear_config_only_in_ets(%{"foo" => "not_to_be_cached"})
+    send(handler_pid, :gear_config_changed)
+
+    assert_receive({:received_response, res}, 5_000)
+    %Httpc.Response{status: status, body: body} = res
+    %{"before" => config_before, "after" => config_after} = Poison.decode!(body)
+    assert status == 200
+    assert config == config_before
+    assert config == config_after
   end
 
   defp set_gear_config_only_in_ets(kv) do

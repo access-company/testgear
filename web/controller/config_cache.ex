@@ -8,6 +8,8 @@ defmodule Testgear.Controller.ConfigCache do
     send(:test_runner, {:finished_fetching_gear_config, self()})
     receive do
       :gear_config_changed -> :ok
+    after
+      5_000 -> :ok
     end
     config_after = Testgear.get_all_env()
     Conn.json(conn, 200, %{before: config_before, after: config_after})

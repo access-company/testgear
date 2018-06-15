@@ -5,7 +5,11 @@ defmodule Testgear.Controller.ConfigCache do
 
   def check(conn) do
     config_before = Testgear.get_all_env()
-    send(:test_runner, {:finished_fetching_gear_config, self()})
+    try do
+      send(:test_runner, {:finished_fetching_gear_config, self()})
+    rescue
+      ArgumentError -> :ok
+    end
     receive do
       :gear_config_changed -> :ok
     after

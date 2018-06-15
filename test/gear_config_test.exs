@@ -44,7 +44,11 @@ defmodule Testgear.GearConfigTest do
     end)
 
     assert_receive({:finished_fetching_gear_config, handler_pid}, 5_000)
+
     GearConfigHelper.set_config(%{"foo" => "not_to_be_cached"})
+    {:dictionary, dict} = Process.info(handler_pid, :dictionary)
+    assert Keyword.has_key?(dict, :gear_configs)
+
     send(handler_pid, :gear_config_changed)
 
     assert_receive({:received_response, res}, 5_000)
@@ -53,5 +57,7 @@ defmodule Testgear.GearConfigTest do
     assert status == 200
     assert config == config_before
     assert config == config_after
+    {:dictionary, dict} = Process.info(handler_pid, :dictionary)
+    refute Keyword.has_key?(dict, :gear_configs)
   end
 end

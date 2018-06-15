@@ -4,8 +4,6 @@ defmodule Testgear.GearConfigTest do
   use ExUnit.Case
   alias Antikythera.Httpc
   alias Antikythera.Test.GearConfigHelper
-  alias AntikytheraCore.Config.Gear, as: GearConfig
-  alias AntikytheraCore.Ets.ConfigCache
 
   setup do
     current_config = Testgear.get_all_env()
@@ -46,7 +44,7 @@ defmodule Testgear.GearConfigTest do
     end)
 
     assert_receive({:finished_fetching_gear_config, handler_pid}, 5_000)
-    set_gear_config_only_in_ets(%{"foo" => "not_to_be_cached"})
+    GearConfigHelper.set_config(%{"foo" => "not_to_be_cached"})
     send(handler_pid, :gear_config_changed)
 
     assert_receive({:received_response, res}, 5_000)
@@ -55,11 +53,5 @@ defmodule Testgear.GearConfigTest do
     assert status == 200
     assert config == config_before
     assert config == config_after
-  end
-
-  defp set_gear_config_only_in_ets(kv) do
-    new_config = %GearConfig{kv: kv, domains: [], log_level: :info, alerts: %{}}
-    GearConfig.write(:testgear, new_config)
-    ConfigCache.Gear.write(:testgear, new_config)
   end
 end

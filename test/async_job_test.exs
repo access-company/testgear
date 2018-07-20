@@ -62,7 +62,10 @@ defmodule Testgear.AsyncJobTest do
   end
 
   defp register_job(todo, options \\ []) do
-    {:ok, _} = TestAsyncJob.register(%{todo: todo}, @epool_id, options)
+    case TestAsyncJob.register(%{todo: todo}, @epool_id, options) do
+      {:ok, _} -> :ok
+      error    -> error
+    end
   end
 
   defp n_waiting_runnable_running() do
@@ -83,6 +86,12 @@ defmodule Testgear.AsyncJobTest do
     assert n_waiting_runnable_running() == {0, 0, 0}
   end
 
+  test "registered job with :immediate option should be immediately executed" do
+    register_job(:send, [immediate: true])
+    assert_receive({:executing, executor_pid})
+    ProcessHelper.monitor_wait(executor_pid)
+  end
+
   test "registered jobs up to pool capacity should be concurrently executed" do
     pool_status = PoolSup.status(RegName.async_job_runner_pool(@epool_id))
     assert pool_status[:reserved] == 0
@@ -96,6 +105,25 @@ defmodule Testgear.AsyncJobTest do
     assert_receive({:executing, _pid})
     assert_receive({:executing, _pid})
     :timer.sleep(150)
+    assert_receive({:executing, _pid})
+    refute_received(_)
+    :timer.sleep(50)
+    assert n_waiting_runnable_running() == {0, 0, 0}
+  end
+
+  test "registered jobs with :immediate option should return an error if there are no processes in the pool" do
+    pool_status = PoolSup.status(RegName.async_job_runner_pool(@epool_id))
+    assert pool_status[:reserved] == 0
+    assert pool_status[:ondemand] == 2
+
+    assert register_job({:sleep, 100}) == :ok
+    assert register_job({:sleep, 150}) == :ok
+    :timer.sleep(50)
+    assert register_job(:send, [immediate: true]) == {:error, :no_available_workers}
+    assert_receive({:executing, _pid})
+    :timer.sleep(50)
+    assert register_job(:send, [immediate: true]) == :ok
+    assert_receive({:executing, _pid})
     assert_receive({:executing, _pid})
     refute_received(_)
     :timer.sleep(50)

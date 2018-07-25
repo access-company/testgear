@@ -172,7 +172,7 @@ defmodule Testgear.AsyncJobTest do
       Enum.each(1..3, fn _ ->
         assert_receive({:executing, _pid})
       end)
-      assert_receive({:abandon, _pid})
+      assert_receive({:abandon, _pid}, 1_000) # long timeout for Circle CI
       assert n_waiting_runnable_running() == {0, 0, 0}
       refute_received(_)
     end)
@@ -203,7 +203,7 @@ defmodule Testgear.AsyncJobTest do
     assert n_waiting_runnable_running() == {1, 0, 0}
     :timer.sleep(200)
     send(job_starter_pid, :timeout)
-    assert_receive({:executing, _pid})
+    assert_receive({:executing, _pid}, 1_000) # long timeout for Circle CI
     refute_received(_)
     :timer.sleep(100)
     assert n_waiting_runnable_running() == {0, 0, 0}

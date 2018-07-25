@@ -51,8 +51,8 @@ jobs:
             echo 'source /usr/local/asdf/asdf.sh' >> $BASH_ENV
             source $BASH_ENV
             asdf plugin-add elixir || asdf plugin-update elixir
-            asdf install elixir 1.5.3
-            asdf global elixir 1.5.3
+            asdf install elixir 1.6.6
+            asdf global elixir 1.6.6
             mix local.hex --force
             mix local.rebar --force
       - save_cache:

@@ -62,7 +62,10 @@ defmodule Testgear.AsyncJobTest do
   end
 
   defp register_job(todo, options \\ []) do
-    {:ok, _} = TestAsyncJob.register(%{todo: todo}, @epool_id, options)
+    case TestAsyncJob.register(%{todo: todo}, @epool_id, options) do
+      {:ok, _} -> :ok
+      error    -> error
+    end
   end
 
   defp n_waiting_runnable_running() do
@@ -75,7 +78,7 @@ defmodule Testgear.AsyncJobTest do
   end
 
   test "registered job should be immediately executed" do
-    register_job(:send)
+    assert register_job(:send) == :ok
     assert_receive({:executing, executor_pid})
     ProcessHelper.monitor_wait(executor_pid)
     :timer.sleep(100)
@@ -83,12 +86,18 @@ defmodule Testgear.AsyncJobTest do
     assert n_waiting_runnable_running() == {0, 0, 0}
   end
 
+  test "registered job with :bypass_job_queue option should be immediately executed" do
+    assert register_job(:send, [bypass_job_queue: true]) == :ok
+    assert_receive({:executing, executor_pid})
+    ProcessHelper.monitor_wait(executor_pid)
+  end
+
   test "registered jobs up to pool capacity should be concurrently executed" do
     pool_status = PoolSup.status(RegName.async_job_runner_pool(@epool_id))
     assert pool_status[:reserved] == 0
     assert pool_status[:ondemand] == 2
 
-    Enum.each(1..5, fn _ -> register_job({:sleep, 100}) end)
+    Enum.each(1..5, fn _ -> assert register_job({:sleep, 100}) == :ok end)
     :timer.sleep(150)
     assert_receive({:executing, _pid})
     assert_receive({:executing, _pid})
@@ -102,8 +111,27 @@ defmodule Testgear.AsyncJobTest do
     assert n_waiting_runnable_running() == {0, 0, 0}
   end
 
+  test "registered jobs with :bypass_job_queue option should return an error if there are no processes in the pool" do
+    pool_status = PoolSup.status(RegName.async_job_runner_pool(@epool_id))
+    assert pool_status[:reserved] == 0
+    assert pool_status[:ondemand] == 2
+
+    assert register_job({:sleep, 100}) == :ok
+    assert register_job({:sleep, 150}) == :ok
+    :timer.sleep(50)
+    assert register_job(:send, [bypass_job_queue: true]) == {:error, :no_available_workers}
+    assert_receive({:executing, _pid})
+    :timer.sleep(50)
+    assert register_job(:send, [bypass_job_queue: true]) == :ok
+    assert_receive({:executing, _pid})
+    assert_receive({:executing, _pid})
+    refute_received(_)
+    :timer.sleep(50)
+    assert n_waiting_runnable_running() == {0, 0, 0}
+  end
+
   test "changing capacity of pool should trigger job execution (if pool size is increased)" do
-    Enum.each(1..3, fn _ -> register_job({:sleep, 300}) end)
+    Enum.each(1..3, fn _ -> assert register_job({:sleep, 300}) == :ok end)
     :timer.sleep(100)
     assert n_waiting_runnable_running() == {0, 1, 2}
 
@@ -123,7 +151,7 @@ defmodule Testgear.AsyncJobTest do
   end
 
   test "should brutally kill long running job and retry it" do
-    register_job({:sleep, 1000}, [max_duration: 100, attempts: 3, retry_interval: {0, 1.0}])
+    assert register_job({:sleep, 1000}, [max_duration: 100, attempts: 3, retry_interval: {0, 1.0}]) == :ok
     :timer.sleep(50)
     assert n_waiting_runnable_running() == {0, 0, 1}
     :timer.sleep(100)
@@ -140,18 +168,18 @@ defmodule Testgear.AsyncJobTest do
 
   test "should retry failed job" do
     Enum.each([:raise, :throw, :exit], fn todo ->
-      register_job(todo, [attempts: 3, retry_interval: {0, 1.0}])
+      assert register_job(todo, [attempts: 3, retry_interval: {0, 1.0}]) == :ok
       Enum.each(1..3, fn _ ->
         assert_receive({:executing, _pid})
       end)
-      assert_receive({:abandon, _pid})
+      assert_receive({:abandon, _pid}, 1_000) # long timeout for Circle CI
       assert n_waiting_runnable_running() == {0, 0, 0}
       refute_received(_)
     end)
   end
 
   test "should handle death of worker due to heap limit violation" do
-    register_job(:exhaust_heap_memory, [attempts: 1])
+    assert register_job(:exhaust_heap_memory, [attempts: 1]) == :ok
     :timer.sleep(500)
     assert n_waiting_runnable_running() == {0, 0, 0}
     assert_receive({:executing, _pid})
@@ -169,13 +197,13 @@ defmodule Testgear.AsyncJobTest do
   test "timed job should be automatically run" do
     job_starter_pid = timed_job_starter_pid()
     t = Time.shift_milliseconds(Time.now(), 200)
-    register_job(:send, [schedule: {:once, t}])
+    assert register_job(:send, [schedule: {:once, t}]) == :ok
     assert n_waiting_runnable_running() == {1, 0, 0}
     send(job_starter_pid, :timeout) # manually trigger timeout of TimedJobStarter
     assert n_waiting_runnable_running() == {1, 0, 0}
     :timer.sleep(200)
     send(job_starter_pid, :timeout)
-    assert_receive({:executing, _pid})
+    assert_receive({:executing, _pid}, 1_000) # long timeout for Circle CI
     refute_received(_)
     :timer.sleep(100)
     assert n_waiting_runnable_running() == {0, 0, 0}
@@ -185,7 +213,7 @@ defmodule Testgear.AsyncJobTest do
     job_starter_pid = timed_job_starter_pid()
     job_id = "foobar"
     t = Time.shift_milliseconds(Time.now(), 100)
-    register_job(:send, [id: job_id, schedule: {:once, t}])
+    assert register_job(:send, [id: job_id, schedule: {:once, t}]) == :ok
     assert n_waiting_runnable_running() == {1, 0, 0}
 
     assert AsyncJob.cancel(:testgear, {:gear, :foo}, job_id) == {:error, {:invalid_executor_pool, {:gear, :foo}}}
@@ -207,7 +235,7 @@ defmodule Testgear.AsyncJobTest do
     m2 = if m1 < 2, do: m1 + 58, else: m1 - 2
     :meck.new(Cron, [:passthrough])
     :meck.expect(Cron, :next_in_epoch_milliseconds, fn(_cron, _time) -> now_millis + 100 end)
-    register_job(:send, [id: job_id, schedule: {:cron, Cron.parse!("#{m2} * * * *")}])
+    assert register_job(:send, [id: job_id, schedule: {:cron, Cron.parse!("#{m2} * * * *")}]) == :ok
     :meck.unload()
 
     refute_received(_)
@@ -227,7 +255,7 @@ defmodule Testgear.AsyncJobTest do
   test "status should report current status of queued job" do
     job_id = "foobar"
     assert AsyncJob.status(@epool_id, job_id) == {:error, :not_found}
-    register_job({:sleep, 100}, [id: job_id])
+    assert register_job({:sleep, 100}, [id: job_id]) == :ok
     {:ok, status} = AsyncJob.status(@epool_id, job_id)
     assert status.payload == %{todo: {:sleep, 100}}
     :timer.sleep(200)

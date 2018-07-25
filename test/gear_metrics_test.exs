@@ -95,14 +95,14 @@ defmodule Testgear.GearMetricsTest do
     assert doc["websocket_frames_sent_sum"    ] == 5
   end
 
-  defp wait_until_runners_terminated(pool_name, n \\ 5) do
+  defp wait_until_runners_terminated(pool_name, n \\ 10) do
     if n == 0 do
       raise "async job runners haven't been terminated!"
     else
       case PoolSup.status(pool_name) do
         %{working: 0} -> :ok
         _             ->
-          :timer.sleep(50)
+          :timer.sleep(100)
           wait_until_runners_terminated(pool_name, n - 1)
       end
     end

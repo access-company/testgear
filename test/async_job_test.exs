@@ -200,7 +200,6 @@ defmodule Testgear.AsyncJobTest do
     assert register_job(:send, [schedule: {:once, t}]) == :ok
     assert n_waiting_runnable_running() == {1, 0, 0}
     send(job_starter_pid, :timeout) # manually trigger timeout of TimedJobStarter
-    assert n_waiting_runnable_running() == {1, 0, 0}
     :timer.sleep(200)
     send(job_starter_pid, :timeout)
     assert_receive({:executing, _pid}, 1_000) # long timeout for Circle CI

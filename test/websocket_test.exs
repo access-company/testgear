@@ -27,9 +27,7 @@ defmodule Testgear.WebsocketTest do
   @tag :blackbox
   test "multiple websocket clients can communicate with each other using the registry" do
     names = Enum.map(1..10, &Integer.to_string/1)
-    pairs = Enum.map(names, fn n ->
-      {n, connect(n)}
-    end)
+    pairs = Enum.map(names, fn n -> {n, connect(n)} end)
 
     for {n1, c1} <- pairs, {n2, c2} <- pairs, n1 != n2 do
       msg = "hello from #{n1} to #{n2}"
@@ -102,11 +100,12 @@ defmodule Testgear.WebsocketTest do
       assert get_connections_count() == 0
     end
 
-    client_pids = Enum.map(1..max, fn n ->
-      pid = connect(Integer.to_string(n))
-      assert get_connections_count() == n
-      pid
-    end)
+    client_pids =
+      Enum.map(1..max, fn n ->
+        pid = connect(Integer.to_string(n))
+        assert get_connections_count() == n
+        pid
+      end)
 
     # should not establish ws connection any more
     catch_error connect(Integer.to_string(max + 1))

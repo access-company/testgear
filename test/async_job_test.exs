@@ -15,7 +15,13 @@ defmodule Testgear.AsyncJobTest do
 
   setup do
     AsyncJobHelper.reset_rate_limit_status(@epool_id)
-    Process.register(self(), TestAsyncJob)
+    try do
+      Process.register(self(), TestAsyncJob)
+    rescue
+      ArgumentError -> # Termination of the previous test process hasn't propagated yet; retry once more.
+        :timer.sleep(100)
+        Process.register(self(), TestAsyncJob)
+    end
     :ok
   end
 
@@ -116,17 +122,17 @@ defmodule Testgear.AsyncJobTest do
     assert pool_status[:reserved] == 0
     assert pool_status[:ondemand] == 2
 
-    assert register_job({:sleep, 100}) == :ok
-    assert register_job({:sleep, 150}) == :ok
-    :timer.sleep(50)
+    assert register_job({:sleep, 500}) == :ok
+    assert register_job({:sleep, 500}) == :ok
+    :timer.sleep(200)
     assert register_job(:send, [bypass_job_queue: true]) == {:error, :no_available_workers}
+    :timer.sleep(500)
     assert_receive({:executing, _pid})
-    :timer.sleep(50)
+    assert_receive({:executing, _pid})
     assert register_job(:send, [bypass_job_queue: true]) == :ok
     assert_receive({:executing, _pid})
-    assert_receive({:executing, _pid})
     refute_received(_)
-    :timer.sleep(50)
+    :timer.sleep(100)
     assert n_waiting_runnable_running() == {0, 0, 0}
   end
 
@@ -145,6 +151,7 @@ defmodule Testgear.AsyncJobTest do
       assert_receive({:executing, _pid})
     end)
     refute_received(_)
+    :timer.sleep(100)
     assert n_waiting_runnable_running() == {0, 0, 0}
 
     ExecutorPool.apply_setting(@epool_id, EPoolSetting.default())
@@ -160,7 +167,7 @@ defmodule Testgear.AsyncJobTest do
     :timer.sleep(100)
     {0, runnable2, running2} = n_waiting_runnable_running()
     assert runnable2 + running2 == 1
-    :timer.sleep(200)
+    :timer.sleep(300)
     assert n_waiting_runnable_running() == {0, 0, 0}
     assert_receive({:abandon, _pid})
     refute_received(_)
@@ -170,6 +177,7 @@ defmodule Testgear.AsyncJobTest do
     Enum.each([:raise, :throw, :exit], fn todo ->
       assert register_job(todo, [attempts: 3, retry_interval: {0, 1.0}]) == :ok
       Enum.each(1..3, fn _ ->
+        :timer.sleep(100)
         assert_receive({:executing, _pid})
       end)
       assert_receive({:abandon, _pid}, 1_000) # long timeout for Circle CI
@@ -180,7 +188,7 @@ defmodule Testgear.AsyncJobTest do
 
   test "should handle death of worker due to heap limit violation" do
     assert register_job(:exhaust_heap_memory, [attempts: 1]) == :ok
-    :timer.sleep(500)
+    :timer.sleep(1000)
     assert n_waiting_runnable_running() == {0, 0, 0}
     assert_receive({:executing, _pid})
     assert_receive({:abandon, _pid})
@@ -243,6 +251,7 @@ defmodule Testgear.AsyncJobTest do
     :timer.sleep(100)
     assert_receive({:executing, _pid})
     refute_received(_)
+    :timer.sleep(100)
     assert n_waiting_runnable_running() == {1, 0, 0}
     {:ok, status} = AsyncJob.status(@epool_id, job_id)
     assert status.start_time >= Time.from_epoch_milliseconds(now_millis)

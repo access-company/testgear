@@ -84,6 +84,12 @@ defmodule Testgear.BodyParserTest do
     assert response.status == 400
   end
 
+  test "should reject with 400 request body that contains a number that doesn't fit into IEEE double" do
+    req_body = ~S|{"foo":100e1000}|
+    response = Req.post("/body_parser", req_body, %{"content-type" => "application/json"})
+    assert response.status == 400
+  end
+
   test "should respond 400 status if request body is Line Delimited JSON and contains a line of invalid JSON" do
     invalid_body = """
     {"valid": "JSON"}

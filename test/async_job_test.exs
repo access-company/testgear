@@ -85,7 +85,7 @@ defmodule Testgear.AsyncJobTest do
 
   test "registered job should be immediately executed" do
     assert register_job(:send) == :ok
-    assert_receive({:executing, executor_pid})
+    assert_receive({:executing, executor_pid}, 200) # use longer timeout for CircleCI test runs
     ProcessHelper.monitor_wait(executor_pid)
     :timer.sleep(100)
     _ = :sys.get_state(get_broker_pid()) # confirm that DOWN message has been processed

@@ -31,6 +31,10 @@ defmodule Testgear.Controller.Error do
     Conn.json(conn, 400, %{error: "bad_request"})
   end
 
+  def bad_executor_pool_id(conn, _reason) do
+    Conn.json(conn, 400, %{error: "bad_executor_pool_id"})
+  end
+
   def ws_too_many_connections(conn) do
     Conn.json(conn, 503, %{error: "ws_too_many_connections"})
   end
@@ -42,5 +46,9 @@ defmodule Testgear.Controller.Error do
   def exhaust_heap_memory(conn) do
     Testgear.Util.exhaust_heap_memory()
     Conn.json(conn, 200, %{"message" => "this body won't be returned"})
+  end
+
+  def blackbox_test_for_nonexisting_tenant(_conn) do
+    raise "should not be called"
   end
 end

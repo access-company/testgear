@@ -28,6 +28,8 @@ defmodule Testgear.Router do
   get  "/priv_file/*file", StaticAsset, :send_priv_file
   get  "/asset_urls"     , StaticAsset, :urls
 
+  get "/config_cache", ConfigCache, :check
+
   get  "/report_log"        , Reporting, :log
   get  "/report_metric"     , Reporting, :metric
   post "/register_async_job", Reporting, :register_async_job
@@ -68,6 +70,5 @@ defmodule Testgear.Router do
   get "/timeout"            , Error, :action_timeout
   get "/incorrect_return"   , Error, :incorrect_return
   get "/exhaust_heap_memory", Error, :exhaust_heap_memory
-
-  get "/config_cache", ConfigCache, :check
+  get "/blackbox_test_for_nonexisting_tenant", Error, :blackbox_test_for_nonexisting_tenant
 end

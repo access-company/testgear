@@ -4,7 +4,7 @@ use Croma
 
 defmodule Testgear do
   use Antikythera.GearApplication
-  alias Antikythera.{ExecutorPool, Conn}
+  alias Antikythera.{ExecutorPool, Conn, Request}
 
   defun children() :: [Supervisor.Spec.spec] do
     [
@@ -12,7 +12,10 @@ defmodule Testgear do
     ]
   end
 
-  defun executor_pool_for_web_request(_conn :: Conn.t) :: ExecutorPool.Id.t do
-    {:gear, :testgear}
+  defun executor_pool_for_web_request(%Conn{request: %Request{path_info: path_info}}) :: ExecutorPool.Id.t do
+    case path_info do
+      ["blackbox_test_for_nonexisting_tenant"] -> {:tenant, "nonexisting_tenant_id"}
+      _                                        -> {:gear, :testgear}
+    end
   end
 end

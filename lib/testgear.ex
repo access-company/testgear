@@ -14,8 +14,8 @@ defmodule Testgear do
 
   defun executor_pool_for_web_request(%Conn{request: %Request{path_info: path_info}}) :: ExecutorPool.Id.t do
     case path_info do
-      ["blackbox_test_for_nonexisting_tenant"] -> {:tenant, "nonexisting_tenant_id"}
-      _                                        -> {:gear, :testgear}
+      ["bad_executor_pool_id"] -> {:gear, :nonexisting_gear}
+      _                        -> {:gear, :testgear}
     end
   end
 end

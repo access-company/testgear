@@ -64,11 +64,11 @@ defmodule Testgear.Router do
     get "/using_only_from_gear_block", Hello, :json
   end
 
-  get "/exception"          , Error, :action_exception
-  get "/throw"              , Error, :action_throw
-  get "/exit"               , Error, :action_exit
-  get "/timeout"            , Error, :action_timeout
-  get "/incorrect_return"   , Error, :incorrect_return
-  get "/exhaust_heap_memory", Error, :exhaust_heap_memory
-  get "/blackbox_test_for_nonexisting_tenant", Error, :blackbox_test_for_nonexisting_tenant
+  get "/exception"           , Error, :action_exception
+  get "/throw"               , Error, :action_throw
+  get "/exit"                , Error, :action_exit
+  get "/timeout"             , Error, :action_timeout
+  get "/incorrect_return"    , Error, :incorrect_return
+  get "/exhaust_heap_memory" , Error, :exhaust_heap_memory
+  get "/bad_executor_pool_id", Error, :just_to_add_route_but_never_be_executed
 end

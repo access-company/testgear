@@ -47,8 +47,4 @@ defmodule Testgear.Controller.Error do
     Testgear.Util.exhaust_heap_memory()
     Conn.json(conn, 200, %{"message" => "this body won't be returned"})
   end
-
-  def blackbox_test_for_nonexisting_tenant(_conn) do
-    raise "should not be called"
-  end
 end

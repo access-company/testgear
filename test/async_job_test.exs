@@ -129,6 +129,7 @@ defmodule Testgear.AsyncJobTest do
     :timer.sleep(500)
     assert_receive({:executing, _pid})
     assert_receive({:executing, _pid})
+    :timer.sleep(100)
     assert register_job(:send, [bypass_job_queue: true]) == :ok
     assert_receive({:executing, _pid})
     refute_received(_)

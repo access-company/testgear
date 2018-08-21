@@ -67,4 +67,11 @@ defmodule Testgear.ErrorHandlerTest do
     assert res.status == 500
     assert res.body   == @custom_error_body
   end
+
+  @tag :blackbox_only
+  test "execute custom error handler when executor_pool_for_web_request/1 returns an unavailable tenant exec pool ID" do
+    res = Req.get("/blackbox_test_for_nonexisting_tenant")
+    assert res.status == 400
+    assert Poison.decode!(res.body) == %{"error" => "bad_executor_pool_id"}
+  end
 end

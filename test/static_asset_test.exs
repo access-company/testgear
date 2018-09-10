@@ -2,7 +2,7 @@
 
 defmodule Testgear.StaticAssetTest do
   use ExUnit.Case
-  alias Antikythera.Httpc
+  alias Antikythera.{Httpc, Env}
   alias Testgear.Asset
 
   @test_html_basename "test.html"
@@ -45,6 +45,7 @@ defmodule Testgear.StaticAssetTest do
     res1 = Req.get("/asset_urls")
     assert res1.status == 200
     %{@test_html_basename => url} = Poison.decode!(res1.body)
+    assert String.starts_with?(url, Env.asset_base_url(:testgear))
     res2 = Httpc.get!(url, %{"origin" => Req.base_url()}) # pretend to be CORS request by adding `origin` request header
     assert res2.status == 200
     assert res2.body == @test_html_content

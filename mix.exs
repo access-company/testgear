@@ -14,11 +14,9 @@ instance_dep =
     non_nil_value ->
       expression =
         try do
-          {expression, _bindings} = Code.eval_string(non_nil_value)
-          expression
+          Code.eval_string(non_nil_value) |> elem(0)
         rescue
-          e ->
-            Mix.raise(Exception.message(e) <> "\n\n" <> help_message)
+          e -> Mix.raise(Exception.message(e) <> "\n\n" <> help_message)
         end
       if is_tuple(expression), do: expression, else: Mix.raise(help_message)
   end

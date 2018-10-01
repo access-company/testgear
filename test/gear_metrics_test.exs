@@ -115,7 +115,7 @@ defmodule Testgear.GearMetricsTest do
         Process.register(self(), TestAsyncJob)
         Enum.each(1..5, fn _ ->
           {:ok, _} = TestAsyncJob.register(%{todo: :send}, epool_id)
-          assert_receive({:executing, _})
+          assert_receive({:executing, _}, 500) # use longer timeout for CircleCI
         end)
         wait_until_runners_terminated(RegName.async_job_runner_pool(epool_id))
       end)

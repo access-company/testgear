@@ -130,7 +130,7 @@ defmodule Testgear.WebsocketTest do
       server_pid = server_pid("foo")
       assert get_connections_count() == 1
       Socket.send_json(client_pid, %{"command" => command})
-      assert_receive(:disconnected, 500)
+      assert_receive(:disconnected, 1_000)
       ProcessHelper.monitor_wait(client_pid)
       ProcessHelper.monitor_wait(server_pid)
       :timer.sleep(10)

@@ -25,8 +25,8 @@ defmodule Testgear.HttpcTest do
 
   test "Httpc.request should properly concatenate :params" do
     [
-      {"/json"    , []                      , %{}                        },
-      {"/json?a=b", []                      , %{"a" => "b"}              },
+      {"/json"    , []                       , %{}                        },
+      {"/json?a=b", []                       , %{"a" => "b"}              },
       {"/json"    , [params: %{"あ" => "い"}], %{"あ" => "い"}            },
       {"/json?a=b", [params: %{"あ" => "い"}], %{"a" => "b", "あ" => "い"}},
     ] |> Enum.each(fn {path, opts, expected_query_params} ->

@@ -23,10 +23,10 @@ Example sequence up to compilation:
 ```sh
 $ git clone https://github.com/access-company/testgear.git
 $ cd testgear
-$ ANTIKYTHERA_INSTANCE_DEP='{:instance_name, [git: "git@github.com:your_organization/instance_name.git"]}'
+$ ANTIKYTHERA_INSTANCE_DEP='{:instance_name, [git: "git@github.com:your-organization/instance_name.git"]}'
 $ export ANTIKYTHERA_INSTANCE_DEP
 $ mix deps.get
-* Getting instance_name (git@github.com:your_organization/instance_name.git)
+* Getting instance_name (git@github.com:your-organization/instance_name.git)
 ... (snip)
 
 $ mix deps.get # Fetch dev/test-only dependencies declared in instance_name

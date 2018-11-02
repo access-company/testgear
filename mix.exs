@@ -4,7 +4,7 @@ dep_env_var = "ANTIKYTHERA_INSTANCE_DEP"
 help_message = """
 #{dep_env_var} must be a proper mix dependency tuple! Example:
 
-{:instance_name, [git: "git@github.com:your_organization/antikythera_instance_name.git"]}
+{:instance_name, [git: "git@github.com:your-organization/antikythera_instance_name.git"]}
 
 """
 

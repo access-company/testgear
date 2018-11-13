@@ -270,4 +270,24 @@ defmodule Testgear.AsyncJobTest do
     :timer.sleep(200)
     assert AsyncJob.status(@epool_id, job_id) == {:error, :not_found}
   end
+
+  defmodule JobWithRaisingInspectPayload do
+    use Antikythera.AsyncJob
+
+    def inspect_payload(_) do
+      raise "fail"
+    end
+
+    def run(_, _, _) do
+      send(TestAsyncJob, :run)
+    end
+  end
+
+  test "exception during inspect_payload/1 should be handeled" do
+    {:ok, job_id} = JobWithRaisingInspectPayload.register(%{p: :p}, @epool_id, [])
+    :timer.sleep(100)
+    assert_receive(:run)
+    :timer.sleep(100)
+    assert AsyncJob.status(@epool_id, job_id) == {:error, :not_found}
+  end
 end

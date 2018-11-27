@@ -26,10 +26,17 @@ defmodule Testgear.ErrorHandlerTest do
     assert res.body   == Poison.encode!(%{error: "bad_request"})
   end
 
-  test "web request: badly implemented controller action should result in an UndefinedResponseError" do
-    res = Req.get("/incorrect_return")
-    assert res.status == 500
-    assert res.body   == "UndefinedResponseError"
+  test "web request: badly implemented controller action should result in an error" do
+    [
+      "/incorrect_return",
+      "/missing_status_code",
+      "/illegal_resp_body",
+    ]
+    |> Enum.each(fn path ->
+      res = Req.get(path)
+      assert res.status == 500
+      assert res.body   == Poison.encode!(@custom_error_body)
+    end)
   end
 
   test "web request: heap limit violation should be reported as 500 error" do
@@ -39,8 +46,9 @@ defmodule Testgear.ErrorHandlerTest do
   end
 
   test "g2g request: error" do
-    ["/exception", "/throw", "/exit", "/timeout"] |> Enum.each(fn path ->
-      conn = ConnHelper.make_conn(path_info: String.split(path, "/", trim: true), sender: {:gear, :testgear})
+    ["exception", "throw", "exit", "timeout"]
+    |> Enum.each(fn path_element ->
+      conn = ConnHelper.make_conn(path_info: [path_element], sender: {:gear, :testgear})
       res = Testgear.G2g.send(conn)
       assert res.status == 500
       assert res.body   == @custom_error_body
@@ -54,11 +62,18 @@ defmodule Testgear.ErrorHandlerTest do
     assert res.body   == %{"error" => "no_route"}
   end
 
-  test "g2g request: badly implemented controller action should result in an UndefinedResponseError" do
-    conn = ConnHelper.make_conn(path_info: ["incorrect_return"], sender: {:gear, :testgear})
-    res = Testgear.G2g.send(conn)
-    assert res.status == 500
-    assert res.body   == "UndefinedResponseError"
+  test "g2g request: badly implemented controller action should result in an error" do
+    [
+      "incorrect_return",
+      "missing_status_code",
+      # `"illegal_resp_body" is not treated as error in current implementation of antikythera; should be fixed.
+    ]
+    |> Enum.each(fn path_element ->
+      conn = ConnHelper.make_conn(path_info: [path_element], sender: {:gear, :testgear})
+      res = Testgear.G2g.send(conn)
+      assert res.status == 500
+      assert res.body   == @custom_error_body
+    end)
   end
 
   test "g2g request: heap limit violation should be reported as 500 error" do

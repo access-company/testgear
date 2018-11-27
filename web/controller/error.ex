@@ -43,6 +43,14 @@ defmodule Testgear.Controller.Error do
     {:ok, Conn.put_status(conn, 200)}
   end
 
+  def missing_status_code(conn) do
+    %Conn{conn | resp_body: "missing_status_code"}
+  end
+
+  def illegal_resp_body(conn) do
+    %Conn{conn | status: 200, resp_body: %{"resp_body can't be a map" => "should instead be a binary"}}
+  end
+
   def exhaust_heap_memory(conn) do
     Testgear.Util.exhaust_heap_memory()
     Conn.json(conn, 200, %{"message" => "this body won't be returned"})

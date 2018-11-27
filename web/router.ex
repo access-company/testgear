@@ -69,6 +69,8 @@ defmodule Testgear.Router do
   get "/exit"                , Error, :action_exit
   get "/timeout"             , Error, :action_timeout
   get "/incorrect_return"    , Error, :incorrect_return
+  get "/missing_status_code" , Error, :missing_status_code
+  get "/illegal_resp_body"   , Error, :illegal_resp_body
   get "/exhaust_heap_memory" , Error, :exhaust_heap_memory
   get "/bad_executor_pool_id", Error, :just_to_add_route_but_never_be_executed
 end

@@ -66,7 +66,7 @@ defmodule Testgear.ErrorHandlerTest do
     [
       "incorrect_return",
       "missing_status_code",
-      # `"illegal_resp_body" is not treated as error in current implementation of antikythera; should be fixed.
+      "illegal_resp_body",
     ]
     |> Enum.each(fn path_element ->
       conn = ConnHelper.make_conn(path_info: [path_element], sender: {:gear, :testgear})

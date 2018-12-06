@@ -124,6 +124,16 @@ defmodule Testgear.WebsocketTest do
     assert get_connections_count() == 0
   end
 
+  test "sending too large websocket frame causes the connection to be closed" do
+    client_pid = connect("0")
+    limit = 5_000_000
+    Socket.send_json(client_pid, %{"command" => "noop", "data" => String.duplicate("a", limit - 100_000)})
+    _ = :sys.get_state(client_pid)
+    assert Process.alive?(client_pid)
+    Socket.send_json(client_pid, %{"command" => "noop", "data" => String.duplicate("a", limit + 100_000)})
+    ProcessHelper.monitor_wait(client_pid)
+  end
+
   test "error in server-side connection process should close the connection" do
     Enum.each(["raise", "throw", "exit", "exhaust_heap_memory"], fn command ->
       client_pid = connect("foo")

@@ -2,6 +2,7 @@
 
 defmodule Testgear.ErrorHandlerTest do
   use ExUnit.Case
+  alias Antikythera.{Request, Conn}
   alias Antikythera.Test.ConnHelper
 
   @custom_error_body %{"from" => "custom_error_handler"}
@@ -24,6 +25,17 @@ defmodule Testgear.ErrorHandlerTest do
     res = Req.post("/json", "invalid JSON", %{"content-type" => "application/json"})
     assert res.status == 400
     assert res.body   == Poison.encode!(%{error: "bad_request"})
+  end
+
+  test "web request: catch exceptions raised by badly implemented error handlers" do
+    res1 = Req.get("/exception?raise=true")
+    assert res1.status == 500
+
+    res2 = Req.get("/no_route_matches?raise=true")
+    assert res2.status == 400
+
+    res3 = Req.post("/json?raise=true", "invalid JSON", %{"content-type" => "application/json"})
+    assert res3.status == 400
   end
 
   test "web request: badly implemented controller action should result in an error" do
@@ -60,6 +72,17 @@ defmodule Testgear.ErrorHandlerTest do
     res = Testgear.G2g.send(conn)
     assert res.status == 400
     assert res.body   == %{"error" => "no_route"}
+  end
+
+  test "g2g request: catch exceptions raised by badly implemented error handlers" do
+    conn_base = ConnHelper.make_conn(sender: {:gear, :testgear}, query_params: %{"raise" => "true"})
+    req_base  = conn_base.request
+
+    res1 = %Conn{conn_base | request: %Request{req_base | path_info: ["exception"]}} |> Testgear.G2g.send()
+    assert res1.status == 500
+
+    res2 = %Conn{conn_base | request: %Request{req_base | path_info: ["no_route_matches"]}} |> Testgear.G2g.send()
+    assert res2.status == 400
   end
 
   test "g2g request: badly implemented controller action should result in an error" do

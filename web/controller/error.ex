@@ -3,10 +3,6 @@
 defmodule Testgear.Controller.Error do
   use Antikythera.Controller
 
-  def error(conn, _reason) do
-    Conn.json(conn, 500, %{from: "custom_error_handler"})
-  end
-
   def action_exception(_conn) do
     raise "error!"
   end
@@ -23,20 +19,42 @@ defmodule Testgear.Controller.Error do
     :timer.sleep(11_000)
   end
 
+  def error(conn, _reason) do
+    raise_if_told(conn, fn ->
+      Conn.json(conn, 500, %{from: "custom_error_handler"})
+    end)
+  end
+
   def no_route(conn) do
-    Conn.json(conn, 400, %{error: "no_route"})
+    raise_if_told(conn, fn ->
+      Conn.json(conn, 400, %{error: "no_route"})
+    end)
   end
 
   def bad_request(conn) do
-    Conn.json(conn, 400, %{error: "bad_request"})
+    raise_if_told(conn, fn ->
+      Conn.json(conn, 400, %{error: "bad_request"})
+    end)
   end
 
   def bad_executor_pool_id(conn, _reason) do
-    Conn.json(conn, 400, %{error: "bad_executor_pool_id"})
+    raise_if_told(conn, fn ->
+      Conn.json(conn, 400, %{error: "bad_executor_pool_id"})
+    end)
   end
 
   def ws_too_many_connections(conn) do
-    Conn.json(conn, 503, %{error: "ws_too_many_connections"})
+    raise_if_told(conn, fn ->
+      Conn.json(conn, 503, %{error: "ws_too_many_connections"})
+    end)
+  end
+
+  defp raise_if_told(conn, f) do
+    if Map.get(conn.request.query_params, "raise") do
+      raise "exception raised in error handler function!"
+    else
+      f.()
+    end
   end
 
   def incorrect_return(conn) do

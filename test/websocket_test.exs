@@ -135,7 +135,8 @@ defmodule Testgear.WebsocketTest do
   end
 
   test "error in server-side connection process should close the connection" do
-    Enum.each(["raise", "throw", "exit", "exhaust_heap_memory"], fn command ->
+#    Enum.each(["raise", "throw", "exit", "exhaust_heap_memory"], fn command ->
+    Enum.each(["exhaust_heap_memory"], fn command ->
       client_pid = connect("foo")
       server_pid = server_pid("foo")
       assert get_connections_count() == 1

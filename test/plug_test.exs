@@ -25,7 +25,7 @@ defmodule Testgear.PlugTest do
     ] |> Enum.each(fn path ->
       res = Req.get(path)
       assert res.status == 500
-      assert res.body   == ~S|{"from":"custom_error_handler"}|
+      assert res.body   == ~S|{"from":"custom_error_handler: error"}|
     end)
   end
 
@@ -51,7 +51,7 @@ defmodule Testgear.PlugTest do
     ] |> Enum.each(fn path ->
       res = GReq.new!([method: :get, path: path, body: ""]) |> Testgear.G2g.send(@context)
       assert res.status == 500
-      assert res.body   == %{"from" => "custom_error_handler"}
+      assert res.body   == %{"from" => "custom_error_handler: error"}
     end)
   end
 

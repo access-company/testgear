@@ -5,13 +5,17 @@ defmodule Testgear.ErrorHandlerTest do
   alias Antikythera.{Request, Conn}
   alias Antikythera.Test.ConnHelper
 
-  @custom_error_body %{"from" => "custom_error_handler"}
-
   test "web request: error" do
-    ["/exception", "/throw", "/exit", "/timeout"] |> Enum.each(fn path ->
+    [
+      {"/exception", :error  },
+      {"/throw"    , :throw  },
+      {"/exit"     , :exit   },
+      {"/timeout"  , :timeout},
+    ]
+    |> Enum.each(fn {path, reason_atom} ->
       res = Req.get(path)
       assert res.status == 500
-      assert res.body   == Poison.encode!(@custom_error_body)
+      assert res.body   == Poison.encode!(%{"from" => "custom_error_handler: #{reason_atom}"})
     end)
   end
 
@@ -47,23 +51,28 @@ defmodule Testgear.ErrorHandlerTest do
     |> Enum.each(fn path ->
       res = Req.get(path)
       assert res.status == 500
-      assert res.body   == Poison.encode!(@custom_error_body)
+      assert res.body   == Poison.encode!(%{"from" => "custom_error_handler: error"})
     end)
   end
 
   test "web request: heap limit violation should be reported as 500 error" do
     res = Req.get("/exhaust_heap_memory")
     assert res.status == 500
-    assert res.body   == Poison.encode!(@custom_error_body)
+    assert res.body   == Poison.encode!(%{"from" => "custom_error_handler: killed"})
   end
 
   test "g2g request: error" do
-    ["exception", "throw", "exit", "timeout"]
-    |> Enum.each(fn path_element ->
+    [
+      {"exception", :error  },
+      {"throw"    , :throw  },
+      {"exit"     , :exit   },
+      {"timeout"  , :timeout},
+    ]
+    |> Enum.each(fn {path_element, reason_atom} ->
       conn = ConnHelper.make_conn(path_info: [path_element], sender: {:gear, :testgear})
       res = Testgear.G2g.send(conn)
       assert res.status == 500
-      assert res.body   == @custom_error_body
+      assert res.body   == %{"from" => "custom_error_handler: #{reason_atom}"}
     end)
   end
 
@@ -95,7 +104,7 @@ defmodule Testgear.ErrorHandlerTest do
       conn = ConnHelper.make_conn(path_info: [path_element], sender: {:gear, :testgear})
       res = Testgear.G2g.send(conn)
       assert res.status == 500
-      assert res.body   == @custom_error_body
+      assert res.body   == %{"from" => "custom_error_handler: error"}
     end)
   end
 
@@ -103,7 +112,7 @@ defmodule Testgear.ErrorHandlerTest do
     conn = ConnHelper.make_conn(path_info: ["exhaust_heap_memory"], sender: {:gear, :testgear})
     res = Testgear.G2g.send(conn)
     assert res.status == 500
-    assert res.body   == @custom_error_body
+    assert res.body   == %{"from" => "custom_error_handler: killed"}
   end
 
   test "execute custom error handler when executor_pool_for_web_request/1 returns an unavailable tenant exec pool ID" do

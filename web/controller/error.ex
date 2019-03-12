@@ -19,9 +19,14 @@ defmodule Testgear.Controller.Error do
     :timer.sleep(11_000)
   end
 
-  def error(conn, _reason) do
+  def error(conn, reason) do
     raise_if_told(conn, fn ->
-      Conn.json(conn, 500, %{from: "custom_error_handler"})
+      reason_atom =
+        case reason do
+          {kind, _} -> kind
+          atom      -> atom
+        end
+      Conn.json(conn, 500, %{from: "custom_error_handler: #{reason_atom}"})
     end)
   end
 

@@ -274,10 +274,12 @@ defmodule Testgear.AsyncJobTest do
   defmodule JobWithRaisingInspectPayload do
     use Antikythera.AsyncJob
 
+    @impl true
     def inspect_payload(_) do
       raise "fail"
     end
 
+    @impl true
     def run(_, _, _) do
       send(TestAsyncJob, :run)
     end

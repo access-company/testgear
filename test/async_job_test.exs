@@ -278,6 +278,7 @@ defmodule Testgear.AsyncJobTest do
       raise "fail"
     end
 
+    @impl true
     def run(_, _, _) do
       send(TestAsyncJob, :run)
     end

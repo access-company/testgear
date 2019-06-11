@@ -63,9 +63,9 @@ defmodule Testgear.RouterTest do
     assert Poison.decode!(res.body) != %{"error" => "no_route"}
     # g2g
     context = ConnHelper.make_conn().context
-    req = G2gRequest.new!(%{method: :get, path: encoded_path})
-    res = Testgear.G2g.send(req, context)
-    assert res.body != %{"error" => "no_route"}
+    req_g2g = G2gRequest.new!(%{method: :get, path: encoded_path})
+    res_g2g = Testgear.G2g.send(req_g2g, context)
+    assert res_g2g.body != %{"error" => "no_route"}
   end
 
   test "should reject request containing URL-encoded path match which is not printable" do

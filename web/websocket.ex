@@ -33,7 +33,9 @@ defmodule Testgear.Websocket do
         %{"command" => "close"}                            -> [:close]
         %{"command" => "noop"}                             -> []
         %{"command" => "echo"}                             -> [frame]
-        %{"command" => "send", "to" => name, "msg" => msg} -> Unique.send_message(name, context, msg); []
+        %{"command" => "send", "to" => name, "msg" => msg} ->
+          Unique.send_message(name, context, msg)
+          []
         %{"command" => "raise"}                            -> raise "ws failed!"
         %{"command" => "throw"}                            -> throw "ws failed!"
         %{"command" => "exit"}                             -> exit("ws failed!")

@@ -12,11 +12,21 @@ defmodule Testgear.TestAsyncJob do
     case payload[:todo] do
       :ok                  -> :ok
       :send                -> send_message()
-      {:sleep, ms}         -> :timer.sleep(ms); send_message()
-      :raise               -> send_message(); raise "job failed!"
-      :throw               -> send_message(); throw "job failed!"
-      :exit                -> send_message(); exit "job failed!"
-      :exhaust_heap_memory -> send_message(); Util.exhaust_heap_memory()
+      {:sleep, ms}         ->
+        :timer.sleep(ms)
+        send_message()
+      :raise               ->
+        send_message()
+        raise "job failed!"
+      :throw               ->
+        send_message()
+        throw "job failed!"
+      :exit                ->
+        send_message()
+        exit "job failed!"
+      :exhaust_heap_memory ->
+        send_message()
+        Util.exhaust_heap_memory()
     end
   end
 

@@ -51,7 +51,7 @@ jobs:
             echo 'source /usr/local/asdf/asdf.sh' >> $BASH_ENV
             source $BASH_ENV
             asdf plugin-add elixir || asdf plugin-update elixir
-            elixir_version="$(curl https://raw.githubusercontent.com/access-company/antikythera_instance_example/master/.tool-versions | grep elixir)"
+            elixir_version="$(curl https://raw.githubusercontent.com/access-company/antikythera/master/.tool-versions | grep elixir)"
             asdf install ${elixir_version}
             asdf global ${elixir_version}
             mix local.hex --force

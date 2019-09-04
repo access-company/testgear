@@ -27,6 +27,7 @@ defmodule Testgear.Controller.Hello do
   end
 
   def json(%Conn{request: req, context: ctx} = conn) do
+    try_sleep(conn)
     req_map = Map.from_struct(req) |> Map.put(:sender, Tuple.to_list(req.sender))
     ctx_map =
       Map.from_struct(ctx)
@@ -48,6 +49,7 @@ defmodule Testgear.Controller.Hello do
   end
 
   def body_parser(%Conn{request: request} = conn) do
+    try_sleep(conn)
     content_type = request.headers["content-type"]
     Conn.json(conn, 200, %{"content-type": content_type, body: request.body})
   end
@@ -82,5 +84,14 @@ defmodule Testgear.Controller.Hello do
     conn
     |> Conn.put_status(200)
     |> Conn.put_resp_header("x-frame-options", "SAMEORIGIN")
+  end
+
+  defp try_sleep(conn) do
+    sleep = conn.request.query_params["sleep"]
+    if sleep != nil do
+      with {msec, _} <- Integer.parse(sleep) do
+        Process.sleep(msec)
+      end
+    end
   end
 end

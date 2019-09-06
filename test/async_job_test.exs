@@ -236,7 +236,7 @@ defmodule Testgear.AsyncJobTest do
   test "recurring job should be requeued on completion" do
     job_starter_pid = timed_job_starter_pid()
     job_id = "foobar"
-    now_millis = System.system_time(:milliseconds)
+    now_millis = System.system_time(:millisecond)
 
     # tweak first execution time on job registration
     {Time, _ymd, {_h, m1, _s}, _} = Time.now()

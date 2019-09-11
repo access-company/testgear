@@ -20,7 +20,7 @@ defmodule Testgear.Controller.Stress do
     end
   end
 
-  def calc_pi(loop) do
+  defp calc_pi(loop) do
     if Antikythera.Env.compile_env() == :prod do
       3.14
     else
@@ -34,7 +34,7 @@ defmodule Testgear.Controller.Stress do
     end
   end
 
-  def sum_list(loop) do
+  defp sum_list(loop) do
     if Antikythera.Env.compile_env() == :prod do
       0
     else

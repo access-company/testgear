@@ -73,4 +73,7 @@ defmodule Testgear.Router do
   get "/illegal_resp_body"   , Error, :illegal_resp_body
   get "/exhaust_heap_memory" , Error, :exhaust_heap_memory
   get "/bad_executor_pool_id", Error, :just_to_add_route_but_never_be_executed
+
+  get "/stress/pi/:loop"  , Stress, :pi
+  get "/stress/list/:loop", Stress, :list
 end

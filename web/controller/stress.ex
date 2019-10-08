@@ -20,10 +20,11 @@ defmodule Testgear.Controller.Stress do
     end
   end
 
-  defp calc_pi(loop) do
-    if Antikythera.Env.compile_env() == :prod do
-      3.14
-    else
+
+  if Antikythera.Env.compile_env() == :prod do
+    defp calc_pi(loop), do: 3.14
+  else
+    defp calc_pi(loop) do
       # Monte Carlo method
       cnt = Enum.count(1..loop, fn(_) ->
         x = :rand.uniform()
@@ -34,10 +35,11 @@ defmodule Testgear.Controller.Stress do
     end
   end
 
-  defp sum_list(loop) do
-    if Antikythera.Env.compile_env() == :prod do
-      0
-    else
+
+  if Antikythera.Env.compile_env() == :prod do
+    defp sum_list(loop), do: 0
+  else
+    defp sum_list(loop) do
       # create many list and binary to trigger GC
       initial = Enum.to_list(1..loop)
       Enum.reduce(1..loop, initial, fn(_, list) ->

@@ -20,9 +20,8 @@ defmodule Testgear.Controller.Stress do
     end
   end
 
-
   if Antikythera.Env.compile_env() == :prod do
-    defp calc_pi(loop), do: 3.14
+    defp calc_pi(_loop), do: 3.14
   else
     defp calc_pi(loop) do
       # Monte Carlo method
@@ -35,9 +34,8 @@ defmodule Testgear.Controller.Stress do
     end
   end
 
-
   if Antikythera.Env.compile_env() == :prod do
-    defp sum_list(loop), do: 0
+    defp sum_list(_loop), do: 0
   else
     defp sum_list(loop) do
       # create many list and binary to trigger GC

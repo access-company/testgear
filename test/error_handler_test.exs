@@ -55,6 +55,7 @@ defmodule Testgear.ErrorHandlerTest do
     end)
   end
 
+  @tag capture_log: true
   test "web request: heap limit violation should be reported as 500 error" do
     res = Req.get("/exhaust_heap_memory")
     assert res.status == 500
@@ -108,6 +109,7 @@ defmodule Testgear.ErrorHandlerTest do
     end)
   end
 
+  @tag capture_log: true
   test "g2g request: heap limit violation should be reported as 500 error" do
     conn = ConnHelper.make_conn(path_info: ["exhaust_heap_memory"], sender: {:gear, :testgear})
     res = Testgear.G2g.send(conn)

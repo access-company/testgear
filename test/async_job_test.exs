@@ -52,6 +52,7 @@ defmodule Testgear.AsyncJobTest do
     assert broker_pid in brokers
   end
 
+  @tag capture_log: true
   test "after restart of a broker, queue should discard dead pid of the previous broker from brokers_waiting" do
     queue_name = RegName.async_job_queue(@epool_id)
     :timer.sleep(20) # wait for startup of the broker (if not yet finished)
@@ -187,6 +188,7 @@ defmodule Testgear.AsyncJobTest do
     end)
   end
 
+  @tag capture_log: true
   test "should handle death of worker due to heap limit violation" do
     assert register_job(:exhaust_heap_memory, [attempts: 1]) == :ok
     :timer.sleep(1000)

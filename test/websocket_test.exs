@@ -134,6 +134,7 @@ defmodule Testgear.WebsocketTest do
     ProcessHelper.monitor_wait(client_pid)
   end
 
+  @tag capture_log: true
   test "error in server-side connection process should close the connection" do
 #    Enum.each(["raise", "throw", "exit", "exhaust_heap_memory"], fn command ->
     Enum.each(["exhaust_heap_memory"], fn command ->

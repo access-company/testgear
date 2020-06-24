@@ -59,6 +59,7 @@ defmodule Testgear.SystemInfoExporterTest do
     Map.values(m) |> Enum.sum()
   end
 
+  @tag capture_log: true
   test "/error_count/:otp_app_name and /error_count/_total" do
     # flush existing error counts
     t1 = Time.now() |> Time.truncate_to_minute() |> Time.shift_minutes(1)

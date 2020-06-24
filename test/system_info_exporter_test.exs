@@ -7,7 +7,7 @@ defmodule Testgear.SystemInfoExporterTest do
   alias AntikytheraCore.Handler.SystemInfoExporter.AccessToken
   require AntikytheraCore.Logger, as: L
 
-  @base_url "http://localhost:#{Antikythera.Env.port_to_listen()}"
+  @base_url "http://127.0.0.1:#{Antikythera.Env.port_to_listen()}"
 
   setup do
     :meck.new(Time, [:passthrough])

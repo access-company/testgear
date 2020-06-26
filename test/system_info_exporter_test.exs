@@ -7,7 +7,7 @@ defmodule Testgear.SystemInfoExporterTest do
   alias AntikytheraCore.Handler.SystemInfoExporter.AccessToken
   require AntikytheraCore.Logger, as: L
 
-  @base_url "http://localhost:#{Antikythera.Env.port_to_listen()}"
+  @base_url "http://127.0.0.1:#{Antikythera.Env.port_to_listen()}"
 
   setup do
     :meck.new(Time, [:passthrough])
@@ -59,6 +59,7 @@ defmodule Testgear.SystemInfoExporterTest do
     Map.values(m) |> Enum.sum()
   end
 
+  @tag capture_log: true
   test "/error_count/:otp_app_name and /error_count/_total" do
     # flush existing error counts
     t1 = Time.now() |> Time.truncate_to_minute() |> Time.shift_minutes(1)

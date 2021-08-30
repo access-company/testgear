@@ -236,6 +236,8 @@ defmodule Testgear.AsyncJobTest do
   end
 
   test "recurring job should be requeued on completion" do
+    :meck.new(Cron, [:passthrough])
+
     job_starter_pid = timed_job_starter_pid()
     job_id = "foobar"
     now_millis = System.system_time(:millisecond)
@@ -243,7 +245,6 @@ defmodule Testgear.AsyncJobTest do
     # tweak first execution time on job registration
     {Time, _ymd, {_h, m1, _s}, _} = Time.now()
     m2 = if m1 < 2, do: m1 + 58, else: m1 - 2
-    :meck.new(Cron, [:passthrough])
     :meck.expect(Cron, :next_in_epoch_milliseconds, fn(_cron, _time) -> now_millis + 100 end)
     assert register_job(:send, [id: job_id, schedule: {:cron, Cron.parse!("#{m2} * * * *")}]) == :ok
     :meck.unload()

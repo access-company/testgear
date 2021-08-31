@@ -236,6 +236,8 @@ defmodule Testgear.AsyncJobTest do
   end
 
   test "recurring job should be requeued on completion" do
+    # We call this function before getting now_millis to ensure that
+    # mocked Cron.next_in_epoch_milliseconds/2 returns a future time.
     :meck.new(Cron, [:passthrough])
 
     job_starter_pid = timed_job_starter_pid()

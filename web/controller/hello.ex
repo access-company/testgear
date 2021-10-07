@@ -2,7 +2,7 @@
 
 defmodule Testgear.Controller.Hello do
   use Antikythera.Controller
-  alias Antikythera.{Time, Request, G2gResponse}
+  alias Antikythera.{Time, Request, G2gResponse, Xml}
 
   def html(conn) do
     Testgear.Gettext.put_locale(conn.request.query_params["locale"] || "en")
@@ -93,5 +93,16 @@ defmodule Testgear.Controller.Hello do
         Process.sleep(msec)
       end
     end
+  end
+
+  def xml(conn) do
+    xml_body =
+      "<greeting>Hello!</greeting>"
+      |> Xml.decode!()
+      |> Xml.encode(with_header: true)
+    conn
+    |> Conn.put_resp_header("content-type", "application/xml")
+    |> Conn.resp_body(xml_body)
+    |> Conn.put_status(200)
   end
 end

@@ -3,6 +3,9 @@
 defmodule Testgear.XmlTest do
   use ExUnit.Case
 
+  # This blackbox test is used for ensureing that
+  # Antikythera.Xml works as expected after hot code upgrade.
+  # This is important because Antikythera.Xml indirectly (via fast_xml) depends on native code.
   @tag :blackbox
   test "should return xml" do
     response = Req.get("/xml")

@@ -24,6 +24,7 @@ defmodule Testgear.Router do
   get  "/gzip_compressed"         , Hello, :gzip_compressed
   get  "/incorrect_content_length", Hello, :incorrect_content_length
   get  "/override_default_header" , Hello, :override_default_header
+  get  "/xml"                     , Hello, :xml
 
   get  "/priv_file/*file", StaticAsset, :send_priv_file
   get  "/asset_urls"     , StaticAsset, :urls

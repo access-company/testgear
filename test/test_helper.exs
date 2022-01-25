@@ -1,4 +1,4 @@
-# Copyright(c) 2015-2021 ACCESS CO., LTD. All rights reserved.
+# Copyright(c) 2015-2022 ACCESS CO., LTD. All rights reserved.
 
 Antikythera.Test.Config.init()
 Antikythera.Test.GearConfigHelper.set_config(%{"BASIC_AUTHENTICATION_ID" => "admin", "BASIC_AUTHENTICATION_PW" => "password"})

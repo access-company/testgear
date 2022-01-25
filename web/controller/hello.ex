@@ -73,6 +73,22 @@ defmodule Testgear.Controller.Hello do
     |> Conn.put_resp_headers(%{"content-encoding" => "gzip", "content-type" => "application/json"})
   end
 
+  def gzip_compressed_post(%Conn{request: request} = conn) do
+    body =
+      case request.headers["content-encoding"] do
+        "gzip" -> :zlib.gunzip(request.body)
+        _ ->
+          if is_binary(request.body) do
+            request.body
+          else
+            inspect(request.body)
+          end
+      end
+    conn
+    |> Conn.put_status(200)
+    |> Conn.put_resp_body(body)
+  end
+
   def incorrect_content_length(conn) do
     conn
     |> Conn.put_status(200)

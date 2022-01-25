@@ -114,4 +114,21 @@ defmodule Testgear.BodyParserTest do
     response = Req.post("/body_parser", req_body, %{"content-type" => "application/x-www-form-urlencoded"})
     assert response.status == 400
   end
+
+  test "should return the gzipped body to the gear if the post body is gzip compressed" do
+    body_text = "{\"fuga\": \"hoge\"}"
+    gzipped_body_text = :zlib.gzip(body_text)
+    inspected_json_body = Jason.decode!(body_text) |> inspect()
+    [
+      {gzipped_body_text, %{"content-encoding" => "gzip", "content-type" => "application/json"}, body_text},
+      {gzipped_body_text, %{"content-encoding" => "gzip"}, body_text},
+      {body_text, %{"content-type" => "application/json"}, inspected_json_body},
+      {body_text, %{}, body_text},
+    ]
+    |> Enum.each(fn {body, headers, expected_body} ->
+      res = Req.post("/gzip_compressed", body, headers)
+      assert res.body == expected_body
+    end)
+  end
+
 end

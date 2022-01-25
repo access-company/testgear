@@ -56,6 +56,8 @@ defmodule Testgear.Router do
   get "/flash/with_notice", Flash, :with_notice
   get "/flash/redirect"   , Flash, :redirect
 
+  post "/content_decoding", ContentDecoding, :echo
+
   get   "/only_from_web"             , Hello, :json, from: :web
   only_from_web do
     get "/using_only_from_web_block" , Hello, :json

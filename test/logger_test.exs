@@ -1,4 +1,4 @@
-# Copyright(c) 2015-2021 ACCESS CO., LTD. All rights reserved.
+# Copyright(c) 2015-2022 ACCESS CO., LTD. All rights reserved.
 
 defmodule Testgear.LoggerTest do
   use ExUnit.Case

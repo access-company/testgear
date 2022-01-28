@@ -22,6 +22,7 @@ defmodule Testgear.Router do
   get  "/path_matches/:a/:b/:c/*d", Hello, :path_matches
   get  "/camelized_header_key"    , Hello, :camelized_header_key
   get  "/gzip_compressed"         , Hello, :gzip_compressed
+  post "/gzip_compressed"         , Hello, :gzip_compressed_post
   get  "/incorrect_content_length", Hello, :incorrect_content_length
   get  "/override_default_header" , Hello, :override_default_header
   get  "/xml"                     , Hello, :xml

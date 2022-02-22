@@ -3,7 +3,10 @@
 defmodule Testgear.Controller.Session do
   use Antikythera.Controller
 
-  plug Antikythera.Plug.Session, :load, [key: "session"]
+  plug Antikythera.Plug.Session, :load, [key: "session"],
+    [except: [:with_set_cookie_option]]
+  plug Antikythera.Plug.Session, :load, [key: "session", set_cookie: %{max_age: 7200}],
+    [only: [:with_set_cookie_option]]
 
   def show(conn) do
     body =
@@ -24,5 +27,9 @@ defmodule Testgear.Controller.Session do
 
   def destroy(conn) do
     conn |> Conn.destroy_session |> Conn.put_status(204)
+  end
+
+  def with_set_cookie_option(conn) do
+    Conn.json(conn, 200, %{})
   end
 end

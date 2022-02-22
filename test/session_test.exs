@@ -82,4 +82,11 @@ defmodule Testgear.SessionTest do
     assert res4.status == 200
     assert res4.body   == %{"key" => "value2"}
   end
+
+  test "session_with_set_cookie_option should add an option to the set-cookie header" do
+    res = Req.get("/session_with_set_cookie_option")
+    assert res.status == 200
+    session = res.cookies["session"]
+    assert session.max_age == 7200
+  end
 end

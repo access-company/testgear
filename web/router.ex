@@ -52,6 +52,7 @@ defmodule Testgear.Router do
   get    "/session", Session, :show
   post   "/session", Session, :create
   delete "/session", Session, :destroy
+  get    "/session_with_set_cookie_option", Session, :with_set_cookie_option
 
   get "/flash"            , Flash, :show
   get "/flash/with_notice", Flash, :with_notice

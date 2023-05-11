@@ -17,6 +17,7 @@ defmodule Testgear.SystemInfoExporterTest do
   test "endpoints should reject request without valid token" do
     [
       "/versions",
+      "/updatability",
       "/error_count/_total",
       "/error_count/antikythera",
     ] |> Enum.each(fn path ->
@@ -38,6 +39,16 @@ defmodule Testgear.SystemInfoExporterTest do
       [name, version] = String.split(line)
       assert version == expected_versions[name]
     end)
+  end
+
+  test "/upgradability should return whether hot code upgrade is enabled for request with valid token" do
+    assert %_{ status: 200, body: "true" } = get_with_token("/upgradability")
+
+    AntikytheraCore.VersionUpgradeTaskQueue.disable()
+    assert %_{ status: 200, body: "false" } = get_with_token("/upgradability")
+
+    AntikytheraCore.VersionUpgradeTaskQueue.enable()
+    assert %_{ status: 200, body: "true" } = get_with_token("/upgradability")
   end
 
   test "/error_count/:otp_app_name should reject request for nonexisting OTP application" do

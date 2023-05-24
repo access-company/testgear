@@ -21,10 +21,9 @@ defmodule Testgear.Websocket do
   @impl true
   def init(%Conn{request: request, context: context}) do
     Logger.info("should be able to emit log in websocket connection process")
-    if Map.has_key?(request.query_params, "name") do
-      :ok = Unique.register(request.query_params["name"], context)
-    else
-      :ok = Group.join(request.query_params["group_name"], context)
+    :ok = case request.query_params do
+      %{"name" => name}             -> Unique.register(name, context)
+      %{"group_name" => group_name} -> Group.join(group_name, context)
     end
     {%{}, []}
   end

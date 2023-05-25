@@ -10,10 +10,6 @@ defmodule Testgear.WebsocketTest do
     Socket.spawn_link("/ws?name=#{name}", 10_000)
   end
 
-  defp connect_to_group(name) do
-    Socket.spawn_link("/ws?group_name=#{name}", 10_000)
-  end
-
   @tag :blackbox
   test "websocket handshake should process plugs" do
     catch_error Socket.spawn_link("/ws")
@@ -42,28 +38,6 @@ defmodule Testgear.WebsocketTest do
     Enum.each(pairs, fn {_, client_pid} ->
       Socket.send_frame(client_pid, :close)
       ProcessHelper.monitor_wait(client_pid)
-    end)
-  end
-
-  @tag :blackbox
-  test "a websocket client can communicate to others using the group registry" do
-    group_name = "my_group"
-    publisher_pid = connect_to_group(group_name)
-    subscriber_pids = Enum.map(0..10, fn _n -> connect_to_group(group_name) end)
-
-    msg = "hello all"
-    Socket.send_json(publisher_pid, %{"command" => "send_group", "to" => group_name, "msg" => msg})
-
-    assert_receive({{:text, ^msg}, ^publisher_pid}, 1000)
-    Enum.each(subscriber_pids, fn pid ->
-      assert_receive({{:text, ^msg}, ^pid}, 1000)
-    end)
-
-    Socket.send_frame(publisher_pid, :close)
-    ProcessHelper.monitor_wait(publisher_pid)
-    Enum.each(subscriber_pids, fn pid ->
-      Socket.send_frame(pid, :close)
-      ProcessHelper.monitor_wait(pid)
     end)
   end
 

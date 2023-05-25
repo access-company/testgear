@@ -4,14 +4,14 @@ use Croma
 
 defmodule Testgear.Websocket do
   use Antikythera.Websocket
-  alias Antikythera.Registry.{Group, Unique}
+  alias Antikythera.Registry.Unique
   alias Testgear.{Logger, Util}
 
-  plug __MODULE__, :reject_request_without_name_and_group_name_parameter, []
+  plug __MODULE__, :reject_request_without_name_parameter, []
 
-  def reject_request_without_name_and_group_name_parameter(%Conn{request: request} = conn, _opts) do
+  def reject_request_without_name_parameter(%Conn{request: request} = conn, _opts) do
     Logger.info("should be able to emit log in websocket connect/0 callback")
-    if Map.has_key?(request.query_params, "name") or Map.has_key?(request.query_params, "group_name") do
+    if Map.has_key?(request.query_params, "name") do
       conn
     else
       Conn.put_status(conn, 400)
@@ -21,55 +21,26 @@ defmodule Testgear.Websocket do
   @impl true
   def init(%Conn{request: request, context: context}) do
     Logger.info("should be able to emit log in websocket connection process")
-    :ok = case request.query_params do
-      %{"name" => name}             -> Unique.register(name, context)
-      %{"group_name" => group_name} -> Group.join(group_name, context)
-    end
+    :ok = Unique.register(request.query_params["name"], context)
     {%{}, []}
-  end
-
-  defp handle_command(%{"command" => "close"}, _context, _frame) do
-    [:close]
-  end
-
-  defp handle_command(%{"command" => "noop"}, _context, _frame) do
-    []
-  end
-
-  defp handle_command(%{"command" => "echo"}, _context, frame) do
-    [frame]
-  end
-
-  defp handle_command(%{"command" => "send", "to" => name, "msg" => msg}, context, _frame) do
-    Unique.send_message(name, context, msg)
-    []
-  end
-
-  defp handle_command(%{"command" => "send_group", "to" => name, "msg" => msg}, context, _frame) do
-    Group.publish(name, context, msg)
-    []
-  end
-
-  defp handle_command(%{"command" => "raise"}, _context, _frame) do
-    raise "ws failed!"
-  end
-
-  defp handle_command(%{"command" => "throw"}, _context, _frame) do
-    throw "ws failed!"
-  end
-
-  defp handle_command(%{"command" => "exit"}, _context, _frame) do
-    exit("ws failed!")
-  end
-
-  defp handle_command(%{"command" => "exhaust_heap_memory"}, _context, _frame) do
-    Util.exhaust_heap_memory()
   end
 
   @impl true
   def handle_client_message(state, %Conn{context: context}, {:text, s} = frame) do
     Logger.info("should be able to emit log in websocket connection process")
-    frames = Poison.decode!(s) |> handle_command(context, frame)
+    frames =
+      case Poison.decode!(s) do
+        %{"command" => "close"}                            -> [:close]
+        %{"command" => "noop"}                             -> []
+        %{"command" => "echo"}                             -> [frame]
+        %{"command" => "send", "to" => name, "msg" => msg} ->
+          Unique.send_message(name, context, msg)
+          []
+        %{"command" => "raise"}                            -> raise "ws failed!"
+        %{"command" => "throw"}                            -> throw "ws failed!"
+        %{"command" => "exit"}                             -> exit("ws failed!")
+        %{"command" => "exhaust_heap_memory"}              -> Util.exhaust_heap_memory()
+      end
     {state, frames}
   end
 

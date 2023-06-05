@@ -44,9 +44,9 @@ defmodule Testgear.WebsocketTest do
   defp server_pid(name) do
     server_pid = Enum.find_value(1..10, fn _ ->
       :timer.sleep(100)
-      case :syn.find_by_key({:gear, :testgear, name}) do
-        :undefined -> nil
-        pid        -> pid
+      case :syn.lookup(:antikythera, {:gear, :testgear, name}) do
+        :undefined   -> nil
+        {pid, _meta} -> pid
       end
     end)
     assert is_pid(server_pid)
@@ -63,9 +63,9 @@ defmodule Testgear.WebsocketTest do
     client_pid = connect("foo")
     server_pid = Enum.find_value(1..10, fn _ ->
       :timer.sleep(100)
-      case :syn.find_by_key({:gear, :testgear, "foo"}) do
-        :undefined -> nil
-        pid        -> pid
+      case :syn.lookup(:antikythera, {:gear, :testgear, "foo"}) do
+        :undefined   -> nil
+        {pid, _meta} -> pid
       end
     end)
     assert is_pid(server_pid)

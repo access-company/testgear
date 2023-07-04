@@ -28,8 +28,8 @@ defmodule Testgear.BodyParserTest do
     req_body = """
     {"valid": "JSON"}
     {
-      "with\r\nCRLF":
-      "with\nLF"
+      "with\\r\\nCRLF":
+      "with\\nLF"
     }
     {
       "nested":

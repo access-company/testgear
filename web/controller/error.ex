@@ -2,6 +2,7 @@
 
 defmodule Testgear.Controller.Error do
   use Antikythera.Controller
+  alias Antikythera.GearActionTimeout
 
   def action_exception(_conn) do
     raise "error!"
@@ -15,8 +16,12 @@ defmodule Testgear.Controller.Error do
     exit "error!"
   end
 
-  def action_timeout(_conn) do
-    :timer.sleep(11_000)
+  def action_timeout(conn) do
+    # Use `GearActionTimeout.default()` to accelerate tests for timeout errors.
+    # Also see `mix.exs`.
+    sleep_ms = GearActionTimeout.default() + 1_000
+    :timer.sleep(sleep_ms)
+    Conn.json(conn, 200, %{})
   end
 
   def error(conn, reason) do

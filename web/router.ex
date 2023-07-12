@@ -73,6 +73,7 @@ defmodule Testgear.Router do
   get "/throw"               , Error, :action_throw
   get "/exit"                , Error, :action_exit
   get "/timeout"             , Error, :action_timeout
+  get "/timeout_long"        , Error, :action_timeout, timeout: 12_000
   get "/incorrect_return"    , Error, :incorrect_return
   get "/missing_status_code" , Error, :missing_status_code
   get "/illegal_resp_body"   , Error, :illegal_resp_body

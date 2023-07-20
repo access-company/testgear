@@ -75,6 +75,7 @@ defmodule Testgear.Router do
   get "/timeout"             , Error, :action_timeout
   get "/timeout_long"        , Error, :action_timeout, timeout: 12_000
   get "/incorrect_return"    , Error, :incorrect_return
+  get "/json_with_status"    , Error, :json_with_status
   get "/missing_status_code" , Error, :missing_status_code
   get "/illegal_resp_body"   , Error, :illegal_resp_body
   get "/exhaust_heap_memory" , Error, :exhaust_heap_memory

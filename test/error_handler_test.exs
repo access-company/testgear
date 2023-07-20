@@ -55,6 +55,19 @@ defmodule Testgear.ErrorHandlerTest do
     end)
   end
 
+  test "web request: return 500 if a status code, which shouldn't have body, returns body" do
+    [
+      "/json_with_status?status=100",
+      "/json_with_status?status=101",
+      "/json_with_status?status=204",
+      "/json_with_status?status=304",
+    ]
+    |> Enum.each(fn path ->
+      res = Req.get(path)
+      assert res.status == 500
+    end)
+  end
+
   @tag capture_log: true
   test "web request: heap limit violation should be reported as 500 error" do
     res = Req.get("/exhaust_heap_memory")

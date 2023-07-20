@@ -71,6 +71,12 @@ defmodule Testgear.Controller.Error do
     {:ok, Conn.put_status(conn, 200)}
   end
 
+  def json_with_status(conn) do
+    status_string = Conn.get_req_query(conn, "status") || "200"
+    {status, _} = Integer.parse(status_string)
+    Conn.json(conn, status, %{})
+  end
+
   def missing_status_code(conn) do
     %Conn{conn | resp_body: "missing_status_code"}
   end

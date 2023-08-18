@@ -20,6 +20,17 @@ defmodule Testgear.WebsocketTest do
     client_pid = connect("foo")
     Socket.send_frame(client_pid, :ping)
     assert_receive({{:pong, ""}, ^client_pid}, 500)
+    refute_receive(:disconnected)
+    Socket.send_frame(client_pid, :close)
+    ProcessHelper.monitor_wait(client_pid)
+  end
+
+  @tag :blackbox
+  test "websocket connection should respond ping with pong with payload" do
+    client_pid = connect("foo")
+    Socket.send_frame(client_pid, {:ping, "hello"})
+    assert_receive({{:pong, "hello"}, ^client_pid}, 500)
+    refute_receive(:disconnected)
     Socket.send_frame(client_pid, :close)
     ProcessHelper.monitor_wait(client_pid)
   end

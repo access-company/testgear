@@ -34,6 +34,7 @@ try do
     use Antikythera.GearProject, [
       antikythera_instance_dep: instance_dep,
       source_url:               "https://github.com/access-company/testgear",
+      docs:                     [source_ref: "master"],
     ]
 
     defp gear_name(), do: :testgear

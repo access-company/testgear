@@ -135,4 +135,34 @@ defmodule Testgear.ErrorHandlerTest do
     assert res.status == 400
     assert Poison.decode!(res.body) == %{"error" => "bad_executor_pool_id"}
   end
+
+  test "execute custom error handler when parameter validation fails" do
+    [
+      {"/params_validation/0?foo=2", ~S({"foo": 3}), %{"content-type" => "application/json", "x-foo" => "4"}, %{"foo" => "5"}, "path_matches", "invalid_value", ["Elixir.Testgear.Controller.ParamsValidation.PathMatches", ["Elixir.Croma.PosInteger", "foo"]]},
+      {"/params_validation/1?foo=0", ~S({"foo": 3}), %{"content-type" => "application/json", "x-foo" => "4"}, %{"foo" => "5"}, "query_params", "invalid_value", ["Elixir.Testgear.Controller.ParamsValidation.QueryParams", ["Elixir.Croma.TypeGen.Nilable.Croma.PosInteger", "foo"]]},
+      {"/params_validation/1?foo=2", ~S({"foo": 0}), %{"content-type" => "application/json", "x-foo" => "4"}, %{"foo" => "5"}, "body", "invalid_value", ["Elixir.Testgear.Controller.ParamsValidation.StructBody", ["Elixir.Croma.PosInteger", "foo"]]},
+      {"/params_validation/1?foo=2", ~S({"foo": 3}), %{"content-type" => "application/json", "x-foo" => "0"}, %{"foo" => "5"}, "headers", "invalid_value", ["Elixir.Testgear.Controller.ParamsValidation.Headers", ["Elixir.Croma.PosInteger", "x-foo"]]},
+      {"/params_validation/1?foo=2", ~S({"foo": 3}), %{"content-type" => "application/json", "x-foo" => "4"}, %{"foo" => "0"}, "cookies", "invalid_value", ["Elixir.Testgear.Controller.ParamsValidation.Cookies", ["Elixir.Croma.PosInteger", "foo"]]},
+
+      {"/params_validation/1?foo=2", ~S({}), %{"content-type" => "application/json", "x-foo" => "4"}, %{"foo" => "5"}, "body", "value_missing", ["Elixir.Testgear.Controller.ParamsValidation.StructBody", ["Elixir.Croma.PosInteger", "foo"]]},
+      {"/params_validation/1?foo=2", ~S({"foo": 3}), %{"content-type" => "application/json"}, %{"foo" => "5"}, "headers", "value_missing", ["Elixir.Testgear.Controller.ParamsValidation.Headers", ["Elixir.Croma.PosInteger", "x-foo"]]},
+      {"/params_validation/1?foo=2", ~S({"foo": 3}), %{"content-type" => "application/json", "x-foo" => "4"}, %{}, "cookies", "value_missing", ["Elixir.Testgear.Controller.ParamsValidation.Cookies", ["Elixir.Croma.PosInteger", "foo"]]},
+
+      {"/list_body_validation", ~S({}), %{"content-type" => "application/json"}, %{}, "body", "invalid_value", ["Elixir.Testgear.Controller.ParamsValidation.ListBody"]},
+
+      {"/map_body_validation", ~S([]), %{"content-type" => "application/json"}, %{}, "body", "invalid_value", ["Elixir.Testgear.Controller.ParamsValidation.MapBody"]},
+    ]
+    |> Enum.each(fn {path, body, headers, cookies, parameter_type, reason_type, mods} ->
+      res = Req.post(path, body, headers, cookie: cookies)
+      assert res.status == 400
+      assert Poison.decode!(res.body) == %{
+        "error" => "parameter_validation_error",
+        "parameter_type" => parameter_type,
+        "reason" => %{
+          "type" => reason_type,
+          "mods" => mods
+        }
+      }
+    end)
+  end
 end

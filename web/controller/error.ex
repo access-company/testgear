@@ -59,6 +59,22 @@ defmodule Testgear.Controller.Error do
     end)
   end
 
+  def parameter_validation_error(conn, parameter_type, {reason_type, mods}) do
+    raise_if_told(conn, fn ->
+      Conn.json(conn, 400, %{
+        error: "parameter_validation_error",
+        parameter_type: parameter_type,
+        reason: %{
+          type: reason_type,
+          mods: Enum.map(mods, fn
+              {mod, field} -> [Atom.to_string(mod), field]
+              mod -> Atom.to_string(mod)
+            end)
+        }
+      })
+    end)
+  end
+
   defp raise_if_told(conn, f) do
     if Map.get(conn.request.query_params, "raise") do
       raise "exception raised in error handler function!"

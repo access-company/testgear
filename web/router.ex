@@ -69,6 +69,10 @@ defmodule Testgear.Router do
     get "/using_only_from_gear_block", Hello, :json
   end
 
+  post "/params_validation/:foo", ParamsValidation, :validate_params
+  post "/list_body_validation"  , ParamsValidation, :validate_list_body
+  post "/map_body_validation"   , ParamsValidation, :validate_map_body
+
   get "/exception"           , Error, :action_exception
   get "/throw"               , Error, :action_throw
   get "/exit"                , Error, :action_exit

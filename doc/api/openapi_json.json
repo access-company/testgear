@@ -1,0 +1,55 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "version": "0.0.1",
+        "title": "testgear api JSON",
+        "description": ""
+    },
+    "servers": [
+        {
+            "url": "https://testgear.example.com",
+            "description": "dev"
+        }
+    ],
+    "paths": {
+        "/openapi/json": {
+            "get": {
+                "operationId": "json",
+                "summary": "API for testing OpenApiAssertHelper",
+                "description": "API for testing OpenApiAssertHelper.\nThis tests JSON file.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "required",
+                        "description": "Required test",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "required"
+                                    ],
+                                    "properties": {
+                                        "required": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 10
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

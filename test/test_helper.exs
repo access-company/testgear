@@ -25,3 +25,15 @@ defmodule Cookie do
     res.cookies[name].max_age == 0
   end
 end
+
+defmodule OpenApiAssert do
+  use Antikythera.Test.OpenApiAssertHelper,
+    yaml_files: ["doc/api/openapi_one.yaml", "doc/api/openapi_two.yaml"],
+    json_files: ["doc/api/openapi_json.json"]
+end
+
+defmodule OpenApiAssertNoNull do
+  use Antikythera.Test.OpenApiAssertHelper,
+    yaml_files: ["doc/api/openapi_one.yaml"],
+    allows_null_for_optional: false
+end

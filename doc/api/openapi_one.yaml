@@ -1,0 +1,380 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: "testgear api one"
+  description: ""
+servers:
+  - url: https://testgear.example.com
+    description: dev
+paths:
+  "/openapi/{mypath}/one":
+    post:
+      operationId: onePost
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper
+        This tests multiple methods and response.
+      parameters:
+        - in: path
+          name: mypath
+          required: true
+          schema:
+            type: string
+            enum: [path1, path2, path3]
+        - in: query
+          name: code
+          description: Change response by this code
+          required: true
+          schema:
+            type: string
+            enum: ["200", 400-1, 400-2, "500"]
+        - in: query
+          name: full
+          description: Control whether this returns all fields
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: invalid
+          description: Control whether this returns invalid value
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - required
+              properties:
+                required:
+                  type: string
+                  description: Required body
+                  minLength: 1
+                  maxLength: 10
+                no_required:
+                  type: integer
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                required:
+                  - required
+                properties:
+                  required:
+                    type: string
+                    minLength: 1
+                    maxLength: 10
+                  no_required:
+                    type: integer
+        "400":
+          description: 400 and test $ref
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/400-1"
+                  - $ref: "#/components/schemas/400-2"
+        "500":
+          description: 500 error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - code
+                      - description
+                    properties:
+                      code:
+                        enum: ["500-00"]
+                        type: string
+                      description:
+                        enum: ["500 Error"]
+                        type: string
+    get:
+      operationId: oneGet
+      summary: API for testing OpenAPI validator
+      description: |
+        API for testing OpenAPI validator.
+        This is GET.
+      parameters:
+        - in: query
+          name: required
+          description: Required test
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
+    put:
+      operationId: onePut
+      summary: API for testing OpenAPI validator
+      description: |
+        API for testing OpenAPI validator.
+        This is PUT.
+      parameters:
+        - in: query
+          name: required
+          description: Required test
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
+    delete:
+      operationId: oneDelete
+      summary: API for testing OpenAPI validator
+      description: |
+        API for testing OpenAPI validator.
+        This is DELETE.
+      parameters:
+        - in: query
+          name: required
+          description: Required test
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
+  "/openapi/query":
+    get:
+      operationId: query
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper.
+        This tests query.
+      parameters:
+        - in: query
+          name: required
+          description: Required test
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: no_required
+          description: No required test
+          schema:
+            type: string
+        - $ref: "#/components/parameters/queryRef"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
+  "/openapi/header":
+    get:
+      operationId: header
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper.
+        This tests header.
+      parameters:
+        - in: header
+          name: required
+          description: Required test
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: no_required
+          description: No required test
+          schema:
+            type: string
+        - $ref: "#/components/parameters/headerRef"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
+  "/openapi/cookie":
+    get:
+      operationId: cookie
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper.
+        This tests cookie.
+      parameters:
+        - in: cookie
+          name: required
+          description: Required test
+          required: true
+          schema:
+            type: string
+        - in: cookie
+          name: no_required
+          description: No required test
+          schema:
+            type: string
+        - $ref: "#/components/parameters/cookieRef"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
+  "/openapi/req_body":
+    post:
+      operationId: reqBody
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper
+        This tests request body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - required
+              properties:
+                required:
+                  type: string
+                  description: Required body
+                  minLength: 1
+                  maxLength: 10
+                no_required:
+                  type: integer
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
+  "/openapi/all_of":
+    get:
+      operationId: allOf
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper.
+        This tests allOf.
+      parameters:
+        - in: query
+          name: one
+          required: true
+          schema:
+            type: boolean
+        - in: query
+          name: two
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/allOfOne"
+                  - $ref: "#/components/schemas/allOfTwo"
+components:
+  parameters:
+    queryRef:
+      in: query
+      name: ref
+      required: true
+      schema:
+        type: string
+    headerRef:
+      in: header
+      name: ref
+      required: true
+      schema:
+        type: string
+    cookieRef:
+      in: cookie
+      name: ref
+      required: true
+      schema:
+        type: string
+  schemas:
+    allOfOne:
+      type: object
+      required:
+        - requiredOne
+      properties:
+        requiredOne:
+          type: string
+    allOfTwo:
+      type: object
+      required:
+        - requiredTwo
+      properties:
+        requiredTwo:
+          type: string
+    400-1:
+      description: |
+        400-1
+      type: object
+      required:
+        - code
+        - description
+      properties:
+        code:
+          enum: ["400-01"]
+          type: string
+        description:
+          type: string
+    400-2:
+      description: |
+        400-2
+      type: object
+      required:
+        - code
+        - description
+      properties:
+        code:
+          enum: ["400-02"]
+          type: string
+        description:
+          type: string
+    success:
+      type: object
+      required:
+        - required
+      properties:
+        required:
+          type: string
+          minLength: 1
+          maxLength: 10

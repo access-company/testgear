@@ -62,7 +62,7 @@ defmodule Testgear.Controller.Error do
   def parameter_validation_error(conn, parameter_type, {reason_type, mods}) do
     raise_if_told(conn, fn ->
       Conn.json(conn, 400, %{
-        error: "parameter_validation_error",
+        error: "testgear_parameter_validation_error",
         parameter_type: parameter_type,
         reason: %{
           type: reason_type,

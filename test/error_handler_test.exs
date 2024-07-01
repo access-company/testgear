@@ -156,7 +156,7 @@ defmodule Testgear.ErrorHandlerTest do
       res = Req.post(path, body, headers, cookie: cookies)
       assert res.status == 400
       assert Poison.decode!(res.body) == %{
-        "error" => "parameter_validation_error",
+        "error" => "testgear_parameter_validation_error",
         "parameter_type" => parameter_type,
         "reason" => %{
           "type" => reason_type,

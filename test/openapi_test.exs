@@ -220,17 +220,17 @@ defmodule Testgear.Controller.OpenApiTest do
     end
 
     test "should return 200 if key is wrong but :ignore_req_fields contains it" do
-        ignored_key = "ignored"
-        body = %{"required" => "sample", ignored_key => "sample"}
-        res =
-          OpenApiAssertNoNull.post_json_for_success(
-            OpenApiAssertNoNull.find_api("reqBody"),
-            "/openapi/req_body",
-            body,
-            %{},
-            [ignore_req_fields: [ignored_key]]
-          )
-        assert res.status == 200
+      ignored_key = "ignored"
+      body = %{"required" => "sample", ignored_key => "sample"}
+      res =
+        OpenApiAssertNoNull.post_json_for_success(
+          OpenApiAssertNoNull.find_api("reqBody"),
+          "/openapi/req_body",
+          body,
+          %{},
+          [ignore_req_fields: [ignored_key]]
+        )
+      assert res.status == 200
     end
   end
 

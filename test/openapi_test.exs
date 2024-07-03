@@ -116,7 +116,7 @@ defmodule Testgear.Controller.OpenApiTest do
 
     test "wrongly return 200 if there is no required" do
       assert_raise AssertionError, fn ->
-        query = "?no_required=no&ref=sample}"
+        query = "?no_required=no&ref=sample"
         OpenApiAssert.get_for_success(OpenApiAssert.find_api("query"), "/openapi/query#{query}")
       end
     end

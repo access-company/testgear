@@ -177,8 +177,8 @@ defmodule Testgear.Controller.OpenApiTest do
 
     test "wrongly return 200 if key is wrong" do
       assert_raise AssertionError, fn ->
-        header = %{"wrong" => "no_required=sample; required=required; ref=sample"}
-        OpenApiAssert.get_for_success(OpenApiAssert.find_api("header"), "/openapi/header", header)
+        header = %{"cookie" => "wrong=sample; required=required; ref=sample"}
+        OpenApiAssert.get_for_success(OpenApiAssert.find_api("cookie"), "/openapi/header", header)
       end
     end
   end

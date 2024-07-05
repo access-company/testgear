@@ -135,4 +135,10 @@ defmodule Testgear.ErrorHandlerTest do
     assert res.status == 400
     assert Poison.decode!(res.body) == %{"error" => "bad_executor_pool_id"}
   end
+
+  test "execute custom error handler when parameter validation fails" do
+    res = Req.post_json("/params_validation/invalid", %{})
+    assert res.status == 400
+    assert %{"error" => "testgear_parameter_validation_error"} = Poison.decode!(res.body)
+  end
 end

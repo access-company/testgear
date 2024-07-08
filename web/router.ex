@@ -85,6 +85,18 @@ defmodule Testgear.Router do
   get "/exhaust_heap_memory" , Error, :exhaust_heap_memory
   get "/bad_executor_pool_id", Error, :just_to_add_route_but_never_be_executed
 
+  post   "/openapi/:mypath/one", OpenApi, :one_post
+  get    "/openapi/:mypath/one", OpenApi, :one_get
+  put    "/openapi/:mypath/one", OpenApi, :one_put
+  delete "/openapi/:mypath/one", OpenApi, :one_delete
+  get    "/openapi/two"        , OpenApi, :two
+  get    "/openapi/json"       , OpenApi, :json
+  get    "/openapi/query"      , OpenApi, :query
+  get    "/openapi/header"     , OpenApi, :header
+  get    "/openapi/cookie"     , OpenApi, :cookie
+  post   "/openapi/req_body"   , OpenApi, :req_body
+  get    "/openapi/all_of"     , OpenApi, :all_of
+
   get "/stress/pi/:loop"  , Stress, :pi
   get "/stress/list/:loop", Stress, :list
 end

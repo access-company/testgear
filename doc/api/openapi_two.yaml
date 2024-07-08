@@ -1,0 +1,37 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: "testgear api two"
+  description: ""
+servers:
+  - url: https://testgear.example.com
+    description: dev
+paths:
+  "/openapi/two":
+    get:
+      operationId: two
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper.
+        This tests two files.
+      parameters:
+        - in: query
+          name: required
+          description: Required test
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                required:
+                  - required
+                properties:
+                  required:
+                    type: string
+                    minLength: 1
+                    maxLength: 10

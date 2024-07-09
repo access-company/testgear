@@ -89,6 +89,10 @@ defmodule Testgear.Controller.OpenApi do
     Conn.json(conn, 200, %{required: conn.request.body["required"]})
   end
 
+  def req_body_ref(conn) do
+    Conn.json(conn, 200, %{required: conn.request.body["required"]})
+  end
+
   def all_of(conn) do
     one = Conn.get_req_query(conn, "one") |> String.to_existing_atom
     two = Conn.get_req_query(conn, "two") |> String.to_existing_atom

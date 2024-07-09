@@ -234,6 +234,57 @@ defmodule Testgear.Controller.OpenApiTest do
     end
   end
 
+  describe "reqBodyRef API" do
+    test "should return 200 if required is specified" do
+      expected = "hoge"
+      body = %{"required" => expected}
+      res = OpenApiAssert.post_json_for_success(OpenApiAssert.find_api("reqBodyRef"), "/openapi/req_body_ref", body)
+      assert res.status == 200
+      assert Jason.decode!(res.body)["required"] == expected
+    end
+
+    test "wrongly return 200 if there is no required" do
+      assert_raise AssertionError, fn ->
+        body = %{}
+        OpenApiAssert.post_json_for_success(OpenApiAssert.find_api("reqBodyRef"), "/openapi/req_body_ref", body)
+      end
+    end
+
+    test "should return 200 if no_required is null" do
+      body = %{"required" => "sample", "no_required" => nil}
+      res = OpenApiAssert.post_json_for_success(OpenApiAssert.find_api("reqBodyRef"), "/openapi/req_body_ref", body)
+      assert res.status == 200
+    end
+
+    test "should fail if no_required is null and :allows_null_for_optional is false" do
+      assert_raise AssertionError, fn ->
+        body = %{"required" => "sample", "no_required" => nil}
+        OpenApiAssertNoNull.post_json_for_success(OpenApiAssertNoNull.find_api("reqBodyRef"), "/openapi/req_body_ref", body)
+      end
+    end
+
+    test "wrongly return 200 if key is wrong" do
+      assert_raise AssertionError, fn ->
+        body = %{"required" => "sample", "wrong" => "sample"}
+        OpenApiAssertNoNull.post_json_for_success(OpenApiAssertNoNull.find_api("reqBodyRef"), "/openapi/req_body_ref", body)
+      end
+    end
+
+    test "should return 200 if key is wrong but :ignore_req_fields contains it" do
+      ignored_key = "ignored"
+      body = %{"required" => "sample", ignored_key => "sample"}
+      res =
+        OpenApiAssertNoNull.post_json_for_success(
+          OpenApiAssertNoNull.find_api("reqBodyRef"),
+          "/openapi/req_body_ref",
+          body,
+          %{},
+          [ignore_req_fields: [ignored_key]]
+        )
+      assert res.status == 200
+    end
+  end
+
   describe "allOf API" do
     test "should return 200 if requiredOne and requiredTwo is specified" do
       res = OpenApiAssert.get_for_success(OpenApiAssert.find_api("allOf"), "/openapi/all_of?one=true&two=true")

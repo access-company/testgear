@@ -80,22 +80,7 @@ paths:
                   - $ref: "#/components/schemas/400-1"
                   - $ref: "#/components/schemas/400-2"
         "500":
-          description: 500 error
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    required:
-                      - code
-                      - description
-                    properties:
-                      code:
-                        enum: ["500-00"]
-                        type: string
-                      description:
-                        enum: ["500 Error"]
-                        type: string
+          $ref: "#/components/responses/internalServerError"
     get:
       operationId: oneGet
       summary: API for testing OpenAPI validator
@@ -280,6 +265,24 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/success"
+  "/openapi/req_body_ref":
+    post:
+      operationId: reqBodyRef
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper
+        This tests request body which is defined using $ref.
+      requestBody:
+        $ref: "#/components/requestBodies/body"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/success"
   "/openapi/all_of":
     get:
       operationId: allOf
@@ -328,6 +331,40 @@ components:
       required: true
       schema:
         type: string
+  requestBodies:
+    body:
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - required
+            properties:
+              required:
+                type: string
+                description: Required body
+                minLength: 1
+                maxLength: 10
+              no_required:
+                type: integer
+  responses:
+    internalServerError:
+      description: 500 error
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - type: object
+                required:
+                  - code
+                  - description
+                properties:
+                  code:
+                    enum: ["500-00"]
+                    type: string
+                  description:
+                    enum: ["500 Error"]
+                    type: string
   schemas:
     allOfOne:
       type: object

@@ -34,4 +34,14 @@ defmodule Testgear.HttpcTest do
       assert qparams == expected_query_params
     end)
   end
+
+  test "Httpc.request_with_logging should write log" do
+    :meck.expect(Testgear.HttpcLogger, :log_info, fn _string ->
+      :ok
+    end)
+
+    Httpc.get_with_logging(:testgear, @base_url <> "/custom/static/path/test.html")
+
+    assert :meck.called(Testgear.HttpcLogger, :log_info, 1)
+  end
 end

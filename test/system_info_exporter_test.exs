@@ -52,7 +52,7 @@ defmodule Testgear.SystemInfoExporterTest do
   end
 
   test "/error_count/:otp_app_name should reject request for nonexisting OTP application" do
-    res = get_with_token("/error_count/nonexisting")
+    res = get_with_token("/error_count/abcnonexistingxyz")
     assert res.status == 404
     assert res.body   == ""
   end

@@ -6,10 +6,17 @@ defmodule Testgear.BasicAuthenticationTest do
 
   @path_list ["/basic_authentication_with_config", "/basic_authentication_with_fun"]
 
-  test "should pass basic authentication" do
+  test "should pass basic authentication via authorization header" do
     credential = "Basic " <> Base.encode64("admin:password")
     Enum.each(@path_list, fn path ->
       res = Req.get(path, %{"authorization" => credential})
+      assert res.status == 200
+    end)
+  end
+
+  test "should pass basic authentication via basic_auth option" do
+    Enum.each(@path_list, fn path ->
+      res = Req.get(path, %{}, basic_auth: {"admin", "password"})
       assert res.status == 200
     end)
   end

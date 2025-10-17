@@ -52,7 +52,7 @@ jobs:
             source $BASH_ENV
             asdf plugin-add erlang || asdf plugin-update erlang
             asdf plugin-add elixir || asdf plugin-update elixir
-            erlang_version="$(grep erlang .tool-versions)"
+            erlang_version="$(curl https://raw.githubusercontent.com/access-company/antikythera/master/.tool-versions | grep erlang)"
             asdf install ${erlang_version}
             asdf global ${erlang_version}
             elixir_version="$(curl https://raw.githubusercontent.com/access-company/antikythera/master/.tool-versions | grep elixir)"

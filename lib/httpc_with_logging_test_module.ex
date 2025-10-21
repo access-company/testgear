@@ -11,6 +11,7 @@ end
 defmodule Testgear.HttpcWithLoggingWithLog do
   use Antikythera.GearApplication.HttpcWithLogging
 
+  @impl true
   defun log(
     method :: v[Http.Method.t()],
     url :: v[Antikythera.Url.t()],

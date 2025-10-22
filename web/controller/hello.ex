@@ -59,6 +59,19 @@ defmodule Testgear.Controller.Hello do
     Conn.json(conn, 200, matches)
   end
 
+  def auth_greeting(%Conn{request: request} = conn) do
+    case request.headers["authorization"] do
+      "Bearer mykey_" <> username when username != "" ->
+        Conn.json(conn, 200, %{message: "Hello, #{username}"})
+
+      nil ->
+        Conn.json(conn, 401, %{error: "Authorization header is required"})
+
+      _ ->
+        Conn.json(conn, 401, %{error: "Invalid authorization format. Expected 'Bearer <secret>_<username>'"})
+    end
+  end
+
   def camelized_header_key(conn) do
     conn
     |> Conn.put_resp_header("Camelized-Key", "Value")

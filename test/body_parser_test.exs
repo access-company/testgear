@@ -110,7 +110,9 @@ defmodule Testgear.BodyParserTest do
   end
 
   test "should respond 400 status if request body is too long" do
-    req_body = "a=" <> String.duplicate("a", 8_000_000 + 3000)
+    size_limit = 8_000_000
+    too_long_size = 2_000_000
+    req_body = "a=" <> String.duplicate("a", size_limit + too_long_size)
     response = Req.post("/body_parser", req_body, %{"content-type" => "application/x-www-form-urlencoded"})
     assert response.status == 400
   end

@@ -26,6 +26,8 @@ defmodule Testgear.Router do
   get  "/incorrect_content_length", Hello, :incorrect_content_length
   get  "/override_default_header" , Hello, :override_default_header
   get  "/xml"                     , Hello, :xml
+  get  "/sse_short"               , Hello, :sse_short, streaming: true
+  get  "/sse_long"                , Hello, :sse_long, streaming: true
 
   get  "/priv_file/*file", StaticAsset, :send_priv_file
   get  "/asset_urls"     , StaticAsset, :urls

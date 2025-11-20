@@ -121,4 +121,60 @@ defmodule Testgear.Controller.Hello do
     |> Conn.resp_body(xml_body)
     |> Conn.put_status(200)
   end
+
+  @doc """
+  Simple SSE endpoint that returns only one chunk.
+  Demonstrates basic SSE usage with a single event.
+  """
+  def sse_short(conn) do
+    conn
+    |> Conn.send_chunked(200, %{"content-type" => "text/event-stream"})
+    |> Conn.chunk("event: message\ndata: Hello from SSE\nid: 1\n\n")
+    |> Conn.end_chunked()
+  end
+
+  @doc """
+  Test SSE endpoint demonstrating the full SSE lifecycle:
+  1. send_chunked - Initialize SSE connection
+  2. chunk - Send first event
+  3. put_streaming_state - Store state for next iteration
+  4. get_streaming_state - Retrieve state in next iteration
+  5. chunk - Send more events
+  6. end_chunked - Close the connection
+  """
+  def sse_long(conn) do
+    # Get the current state (will be nil on first call)
+    state = Conn.get_streaming_state(conn)
+
+    case state do
+      nil ->
+        conn
+        |> Conn.send_chunked(200, %{"content-type" => "text/event-stream"})
+        |> Conn.chunk("event: start\ndata: SSE connection established\nid: 1\n\n")
+        |> Conn.put_streaming_state(%{count: 1, messages: ["start"]})
+
+      %{count: count} when count < 5 ->
+        # Subsequent iterations: send more chunks
+        # Sleep to simulate event generation delay
+        Process.sleep(100)
+
+        new_count = count + 1
+        message = "Message #{new_count}"
+
+        conn
+        |> Conn.chunk("event: message\ndata: #{message}\nid: #{new_count}\n\n")
+        |> Conn.put_streaming_state(%{count: new_count, messages: [message | state.messages]})
+
+      %{count: count} ->
+        # Final iteration: send last chunk and end
+        # Sleep before sending final message
+        Process.sleep(100)
+
+        messages_summary = Enum.reverse(state.messages) |> Enum.join(", ")
+
+        conn
+        |> Conn.chunk("event: end\ndata: Sent #{count} messages: #{messages_summary}\nid: #{count + 1}\n\n")
+        |> Conn.end_chunked()
+    end
+  end
 end

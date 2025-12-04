@@ -190,4 +190,8 @@ defmodule Testgear.Controller.Hello do
         |> Conn.end_chunked()
     end
   end
+
+  def streaming_no_body(conn) do
+    Conn.put_status(conn, 202)
+  end
 end

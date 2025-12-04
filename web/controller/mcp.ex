@@ -130,7 +130,7 @@ defmodule Testgear.Controller.Mcp do
       request: %Request{
         conn.request |
         method: :get,
-        path_info: ["auth_greeting"],
+        path_info: ["auth_greeting"]
       }
     }
     %G2gResponse{status: status, body: body} = Testgear.G2g.send(conn2)

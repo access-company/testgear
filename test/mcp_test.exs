@@ -226,8 +226,8 @@ defmodule Testgear.McpTest do
       sse_data = parse_sse_response(response.body)
       assert sse_data["jsonrpc"] == "2.0"
       assert sse_data["id"] == 9
-      assert sse_data["error"]["code"] == -32_601
-      assert String.contains?(sse_data["error"]["message"], "Tool not found")
+      assert sse_data["error"]["code"] == -32_602
+      assert String.contains?(sse_data["error"]["message"], "not found")
     end
   end
 
@@ -241,9 +241,28 @@ defmodule Testgear.McpTest do
 
       response = Req.post_json(@mcp_path, request_body, %{})
 
+      assert response.status == 200
+      body = Jason.decode!(response.body)
+      assert body["jsonrpc"] == "2.0"
+      assert body["id"] == 10
+      assert body["error"]["code"] == -32_601
+      assert String.contains?(body["error"]["message"], "Method not found")
+    end
+
+    test "should return error when method key is missing" do
+      request_body = %{
+        jsonrpc: "2.0",
+        id: 11
+      }
+
+      response = Req.post_json(@mcp_path, request_body, %{})
+
       assert response.status == 400
       body = Jason.decode!(response.body)
-      assert body["error"] == "Unknown method"
+      assert body["jsonrpc"] == "2.0"
+      assert body["id"] == 11
+      assert body["error"]["code"] == -32_602
+      assert body["error"]["message"] == "Invalid params: Missing method"
     end
   end
 

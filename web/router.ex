@@ -28,6 +28,8 @@ defmodule Testgear.Router do
   get  "/xml"                     , Hello, :xml
   get  "/sse_short"               , Hello, :sse_short, streaming: true
   get  "/sse_long"                , Hello, :sse_long, streaming: true
+  get  "/streaming_no_body"       , Hello, :streaming_no_body, streaming: true
+  get  "/auth_greeting"           , Hello, :auth_greeting
 
   get  "/priv_file/*file", StaticAsset, :send_priv_file
   get  "/asset_urls"     , StaticAsset, :urls
@@ -60,7 +62,7 @@ defmodule Testgear.Router do
   get "/flash/with_notice", Flash, :with_notice
   get "/flash/redirect"   , Flash, :redirect
 
-  post "/content_decoding", ContentDecoding, :echo
+  post "/content_decoding", ContentDecoding, :echo, as: "content_decoding"
 
   get   "/only_from_web"             , Hello, :json, from: :web
   only_from_web do
@@ -99,6 +101,10 @@ defmodule Testgear.Router do
   post   "/openapi/req_body"    , OpenApi, :req_body
   post   "/openapi/req_body_ref", OpenApi, :req_body_ref
   get    "/openapi/all_of"      , OpenApi, :all_of
+
+  post   "/mcp", Mcp, :chunked_response, streaming: true
+  get    "/mcp", Mcp, :method_not_allowed
+  delete "/mcp", Mcp, :method_not_allowed
 
   get "/stress/pi/:loop"  , Stress, :pi
   get "/stress/list/:loop", Stress, :list

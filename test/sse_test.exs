@@ -74,4 +74,11 @@ defmodule Testgear.SseTest do
     # Assert response didn't take too long (less than 1 second)
     assert duration < 1000, "Expected less than 1000ms, got #{duration}ms"
   end
+
+  test "streaming_no_body should respond with 202 Accepted and empty body" do
+    response = Req.get("/streaming_no_body")
+
+    assert response.status == 202
+    assert response.body == ""
+  end
 end

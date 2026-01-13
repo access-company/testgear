@@ -6,4 +6,4 @@ set -euo pipefail
 
 cd "$(dirname "$0")/../../.."
 
-find . -name '*.md' -not -path '*/deps/*' -not -path '*/node_modules/*' -print0 | xargs -0 -n1 markdown-link-check --quiet --config deps/antikythera_acs/mdlinkcheck.config.json
+find . -name '*.md' -not -path '*/deps/*' -not -path '*/node_modules/*' -print0 | xargs -0 -n1 markdown-link-check --quiet

@@ -285,6 +285,14 @@ defmodule Testgear.Controller.OpenApiTest do
     end
   end
 
+  describe "schemaRef API" do
+    test "should return 200 and response body which is defined using $ref if required is specified" do
+      res = OpenApiAssert.get_for_success(OpenApiAssert.find_api("schemaRef"), "/openapi/schema_ref")
+      assert res.status == 200
+      assert Jason.decode!(res.body)["required"] == "string"
+    end
+  end
+
   describe "allOf API" do
     test "should return 200 if requiredOne and requiredTwo is specified" do
       res = OpenApiAssert.get_for_success(OpenApiAssert.find_api("allOf"), "/openapi/all_of?one=true&two=true")

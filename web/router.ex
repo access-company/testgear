@@ -100,6 +100,7 @@ defmodule Testgear.Router do
   get    "/openapi/cookie"      , OpenApi, :cookie
   post   "/openapi/req_body"    , OpenApi, :req_body
   post   "/openapi/req_body_ref", OpenApi, :req_body_ref
+  get    "/openapi/schema_ref"  , OpenApi, :schema_ref
   get    "/openapi/all_of"      , OpenApi, :all_of
 
   post   "/mcp", Mcp, :chunked_response, streaming: true

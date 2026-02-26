@@ -283,6 +283,21 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/success"
+  "/openapi/schema_ref":
+    get:
+      operationId: schemaRef
+      summary: API for testing OpenApiAssertHelper
+      description: |
+        API for testing OpenApiAssertHelper.
+        This tests schema which is defined using $ref.
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/success"
   "/openapi/all_of":
     get:
       operationId: allOf

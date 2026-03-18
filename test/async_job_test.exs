@@ -22,11 +22,12 @@ defmodule Testgear.AsyncJobTest do
         :timer.sleep(100)
         Process.register(self(), TestAsyncJob)
     end
-    cleanup_jobs()
+    cleanup_jobs(3)
     :ok
   end
 
-  defp cleanup_jobs() do
+  defp cleanup_jobs(0), do: :ok
+  defp cleanup_jobs(remaining_attempts) do
     queue_name = RegName.async_job_queue(@epool_id)
     jobs = Queue.list(queue_name)
     Enum.each(jobs, fn {_time, job_id, state} ->
@@ -40,9 +41,7 @@ defmodule Testgear.AsyncJobTest do
     end)
     if jobs != [] do
       :timer.sleep(100)
-      # Ensure all jobs are cleaned up
-      remaining = Queue.list(queue_name)
-      if remaining != [], do: cleanup_jobs()
+      cleanup_jobs(remaining_attempts - 1)
     end
   end
 

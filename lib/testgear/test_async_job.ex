@@ -15,6 +15,9 @@ defmodule Testgear.TestAsyncJob do
       {:sleep, ms}         ->
         :timer.sleep(ms)
         send_message()
+      {:send_and_sleep, ms} ->
+        send_message()
+        :timer.sleep(ms)
       :raise               ->
         send_message()
         raise "job failed!"

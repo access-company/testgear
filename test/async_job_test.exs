@@ -23,6 +23,7 @@ defmodule Testgear.AsyncJobTest do
         Process.register(self(), TestAsyncJob)
     end
     cleanup_jobs(3)
+    flush_mailbox()
     :ok
   end
 
@@ -42,6 +43,14 @@ defmodule Testgear.AsyncJobTest do
     if jobs != [] do
       :timer.sleep(100)
       cleanup_jobs(remaining_attempts - 1)
+    end
+  end
+
+  defp flush_mailbox() do
+    receive do
+      _ -> flush_mailbox()
+    after
+      0 -> :ok
     end
   end
 

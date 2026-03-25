@@ -22,7 +22,36 @@ defmodule Testgear.AsyncJobTest do
         :timer.sleep(100)
         Process.register(self(), TestAsyncJob)
     end
+    cleanup_jobs(3)
+    flush_mailbox()
     :ok
+  end
+
+  defp cleanup_jobs(0), do: :ok
+  defp cleanup_jobs(remaining_attempts) do
+    queue_name = RegName.async_job_queue(@epool_id)
+    jobs = Queue.list(queue_name)
+    Enum.each(jobs, fn {_time, job_id, state} ->
+      AsyncJobHelper.reset_rate_limit_status(@epool_id)
+      case state do
+        :running ->
+          AsyncJob.force_stop(:testgear, @epool_id, job_id)
+        _ ->
+          AsyncJob.cancel(:testgear, @epool_id, job_id)
+      end
+    end)
+    if jobs != [] do
+      :timer.sleep(100)
+      cleanup_jobs(remaining_attempts - 1)
+    end
+  end
+
+  defp flush_mailbox() do
+    receive do
+      _ -> flush_mailbox()
+    after
+      0 -> :ok
+    end
   end
 
   defp get_broker_pid() do
@@ -288,6 +317,44 @@ defmodule Testgear.AsyncJobTest do
     def run(_, _, _) do
       send(TestAsyncJob, :run)
     end
+  end
+
+  test "force_stop should kill a running job" do
+    job_id = "force_stop_test"
+    assert register_job({:send_and_sleep, 5000}, id: job_id) == :ok
+    assert_receive({:executing, worker_pid}, 200)
+
+    # Worker is alive and running
+    ref = Process.monitor(worker_pid)
+    assert Process.alive?(worker_pid)
+
+    # Force stop
+    assert AsyncJob.force_stop(:testgear, @epool_id, job_id) == :ok
+
+    # Worker should die (well before the 5000ms sleep)
+    assert_receive({:DOWN, ^ref, :process, ^worker_pid, :killed}, 500)
+
+    # Job removed from queue
+    :timer.sleep(100)
+    assert n_waiting_runnable_running() == {0, 0, 0}
+
+    # abandon callback should NOT be called
+    refute_received({:abandon, _})
+  end
+
+  test "force_stop nonexistent job should return error" do
+    assert AsyncJob.force_stop(:testgear, @epool_id, "nonexistent") == {:error, :not_found}
+  end
+
+  test "force_stop waiting job should return :not_running" do
+    job_id = "force_stop_waiting"
+    t = Time.shift_seconds(Time.now(), 10)
+    assert register_job(:send, id: job_id, schedule: {:once, t}) == :ok
+    assert AsyncJob.force_stop(:testgear, @epool_id, job_id) == {:error, :not_running}
+    # Job should still be in the queue
+    {:ok, status} = AsyncJob.status(@epool_id, job_id)
+    assert status.state == :waiting
+    assert AsyncJob.cancel(:testgear, @epool_id, job_id) == :ok
   end
 
   test "exception during inspect_payload/1 should be handeled" do

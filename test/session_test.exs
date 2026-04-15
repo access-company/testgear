@@ -13,6 +13,13 @@ defmodule Testgear.SessionTest do
     assert res_json   == %{"key" => nil}
   end
 
+  test "in-process: session should return nil if session is not created" do
+    res      = ReqInProcess.get("/session?key=key")
+    res_json = Poison.decode!(res.body)
+    assert res.status == 200
+    assert res_json   == %{"key" => nil}
+  end
+
   test "session should return saved value if session is created" do
     res1      = Req.post_json("/session", %{"key" => "value"})
     res_json1 = Poison.decode!(res1.body)
@@ -36,6 +43,17 @@ defmodule Testgear.SessionTest do
     assert res_json4   == %{"key" => "value2"}
   end
 
+  test "in-process: session round-trip create and read" do
+    res1 = ReqInProcess.post_json("/session", %{"key" => "value"})
+    assert res1.status == 200
+    assert Poison.decode!(res1.body) == %{"key" => "value"}
+    assert Cookie.valid?(res1, "session")
+
+    res2 = ReqInProcess.get("/session?key=key", Cookie.response_to_request_cookie(res1))
+    assert res2.status == 200
+    assert Poison.decode!(res2.body) == %{"key" => "value"}
+  end
+
   test "session should return nil if session value is deleted" do
     res1      = Req.post_json("/session", %{"key" => "value"})
     res2      = Req.get("/session?key=key", Cookie.response_to_request_cookie(res1))
@@ -53,6 +71,13 @@ defmodule Testgear.SessionTest do
   test "session value in cookie should be expired if session is destroyed" do
     res1 = Req.post_json("/session", %{"key" => "value"})
     res2 = Req.delete("/session", Cookie.response_to_request_cookie(res1))
+    assert res2.status == 204
+    assert Cookie.expired?(res2, "session")
+  end
+
+  test "in-process: session value in cookie should be expired if session is destroyed" do
+    res1 = ReqInProcess.post_json("/session", %{"key" => "value"})
+    res2 = ReqInProcess.delete("/session", Cookie.response_to_request_cookie(res1))
     assert res2.status == 204
     assert Cookie.expired?(res2, "session")
   end

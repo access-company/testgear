@@ -9,6 +9,12 @@ defmodule Testgear.CookieTest do
     assert res.cookies == %{}
   end
 
+  test "in-process: cookie of request should not automatically be set to response header" do
+    res = ReqInProcess.get("/json", %{"cookie" => "foo=bar"})
+    assert res.status  == 200
+    assert res.cookies == %{}
+  end
+
   test "cookie with forbidden characters should be registered" do
     key       = "key_()<>@,;:\\<>/[]?={} "
     value     = "val_()<>@,;:\\<>/[]?={} "
@@ -30,8 +36,22 @@ defmodule Testgear.CookieTest do
     assert Cookie.expired?(res, "foo")
   end
 
+  test "in-process: deleted cookie should be expired" do
+    res = ReqInProcess.delete("/cookie?key=foo", %{"cookie" => "foo=bar"})
+    assert res.status == 200
+    assert Cookie.expired?(res, "foo")
+  end
+
   test "should be able to set multiple cookies at once" do
     res = Req.get("/multiple_cookies")
+    assert res.status == 200
+    assert res.cookies["k1"].value == "v1"
+    assert res.cookies["k2"].value == "v2"
+    assert res.cookies["k3"].value == "v3"
+  end
+
+  test "in-process: should be able to set multiple cookies at once" do
+    res = ReqInProcess.get("/multiple_cookies")
     assert res.status == 200
     assert res.cookies["k1"].value == "v1"
     assert res.cookies["k2"].value == "v2"

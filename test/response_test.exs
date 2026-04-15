@@ -20,6 +20,11 @@ defmodule Testgear.ResponseTest do
     assert byte_size(res.body) == String.to_integer(res.headers["content-length"])
   end
 
+  test "in-process: should correctly set content-length header" do
+    res = ReqInProcess.get("/incorrect_content_length")
+    assert byte_size(res.body) == String.to_integer(res.headers["content-length"])
+  end
+
   test "should correctly set default headers" do
     res1 = Req.get("/json")
     assert res1.headers["x-frame-options"          ] == "DENY"
@@ -28,6 +33,20 @@ defmodule Testgear.ResponseTest do
     assert res1.headers["strict-transport-security"] == "max-age=31536000"
 
     res2 = Req.get("/override_default_header")
+    assert res2.headers["x-frame-options"          ] == "SAMEORIGIN"
+    assert res2.headers["x-xss-protection"         ] == "1; mode=block"
+    assert res2.headers["x-content-type-options"   ] == "nosniff"
+    assert res2.headers["strict-transport-security"] == "max-age=31536000"
+  end
+
+  test "in-process: should correctly set default headers" do
+    res1 = ReqInProcess.get("/json")
+    assert res1.headers["x-frame-options"          ] == "DENY"
+    assert res1.headers["x-xss-protection"         ] == "1; mode=block"
+    assert res1.headers["x-content-type-options"   ] == "nosniff"
+    assert res1.headers["strict-transport-security"] == "max-age=31536000"
+
+    res2 = ReqInProcess.get("/override_default_header")
     assert res2.headers["x-frame-options"          ] == "SAMEORIGIN"
     assert res2.headers["x-xss-protection"         ] == "1; mode=block"
     assert res2.headers["x-content-type-options"   ] == "nosniff"

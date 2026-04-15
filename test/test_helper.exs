@@ -7,6 +7,10 @@ defmodule Req do
   use Antikythera.Test.HttpClient
 end
 
+defmodule ReqInProcess do
+  use Antikythera.Test.InProcessClient
+end
+
 defmodule Socket do
   use Antikythera.Test.WebsocketClient
 end

@@ -14,9 +14,24 @@ defmodule Testgear.BasicAuthenticationTest do
     end)
   end
 
+  test "in-process: should pass basic authentication via authorization header" do
+    credential = "Basic " <> Base.encode64("admin:password")
+    Enum.each(@path_list, fn path ->
+      res = ReqInProcess.get(path, %{"authorization" => credential})
+      assert res.status == 200
+    end)
+  end
+
   test "should pass basic authentication via basic_auth option" do
     Enum.each(@path_list, fn path ->
       res = Req.get(path, %{}, basic_auth: {"admin", "password"})
+      assert res.status == 200
+    end)
+  end
+
+  test "in-process: should pass basic authentication via basic_auth option" do
+    Enum.each(@path_list, fn path ->
+      res = ReqInProcess.get(path, %{}, basic_auth: {"admin", "password"})
       assert res.status == 200
     end)
   end

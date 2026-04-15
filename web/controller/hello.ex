@@ -59,6 +59,11 @@ defmodule Testgear.Controller.Hello do
     Conn.json(conn, 200, matches)
   end
 
+  def store_pid(conn) do
+    Process.put(:controller_pid, self())
+    Conn.json(conn, 200, %{})
+  end
+
   def auth_greeting(%Conn{request: request} = conn) do
     case request.headers["authorization"] do
       "Bearer mykey_" <> username when username != "" ->

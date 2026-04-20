@@ -12,7 +12,7 @@ defmodule Testgear.Controller.AuthGreetingTest do
   test "in-process: returns greeting with valid Authorization header" do
     response = ReqInProcess.get("/auth_greeting", %{"authorization" => "Bearer mykey_testuser123"})
     assert response.status == 200
-    assert Poison.decode!(response.body) == %{"message" => "Hello, testuser123"}
+    assert Jason.decode!(response.body) == %{"message" => "Hello, testuser123"}
   end
 
   test "returns error when Authorization header is missing" do

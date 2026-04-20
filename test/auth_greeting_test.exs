@@ -24,6 +24,7 @@ defmodule Testgear.Controller.AuthGreetingTest do
   test "in-process: returns error when Authorization header is missing" do
     response = ReqInProcess.get("/auth_greeting")
     assert response.status == 401
+    assert Jason.decode!(response.body) == %{"error" => "Authorization header is required"}
   end
 
   test "returns error when Authorization header is invalid" do

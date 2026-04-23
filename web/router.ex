@@ -29,6 +29,7 @@ defmodule Testgear.Router do
   get  "/sse_short"               , Hello, :sse_short, streaming: true
   get  "/sse_long"                , Hello, :sse_long, streaming: true
   get  "/streaming_no_body"       , Hello, :streaming_no_body, streaming: true
+  get  "/store_pid"               , Hello, :store_pid
   get  "/auth_greeting"           , Hello, :auth_greeting
 
   get  "/priv_file/*file", StaticAsset, :send_priv_file

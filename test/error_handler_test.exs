@@ -19,14 +19,40 @@ defmodule Testgear.ErrorHandlerTest do
     end)
   end
 
+  # InProcessClient: skip /timeout (no timeout enforcement)
+  test "in-process web request: error" do
+    [
+      {"/exception", :error  },
+      {"/throw"    , :throw  },
+      {"/exit"     , :exit   },
+    ]
+    |> Enum.each(fn {path, reason_atom} ->
+      res = ReqInProcess.get(path)
+      assert res.status == 500
+      assert res.body   == Poison.encode!(%{"from" => "custom_error_handler: #{reason_atom}"})
+    end)
+  end
+
   test "web request: no_route" do
     res = Req.get("/no_route_matches")
     assert res.status == 400
     assert res.body   == Poison.encode!(%{error: "no_route"})
   end
 
+  test "in-process web request: no_route" do
+    res = ReqInProcess.get("/no_route_matches")
+    assert res.status == 400
+    assert res.body   == Poison.encode!(%{error: "no_route"})
+  end
+
   test "web request: bad_request" do
     res = Req.post("/json", "invalid JSON", %{"content-type" => "application/json"})
+    assert res.status == 400
+    assert res.body   == Poison.encode!(%{error: "bad_request"})
+  end
+
+  test "in-process web request: bad_request" do
+    res = ReqInProcess.post("/json", "invalid JSON", %{"content-type" => "application/json"})
     assert res.status == 400
     assert res.body   == Poison.encode!(%{error: "bad_request"})
   end
@@ -39,6 +65,17 @@ defmodule Testgear.ErrorHandlerTest do
     assert res2.status == 400
 
     res3 = Req.post("/json?raise=true", "invalid JSON", %{"content-type" => "application/json"})
+    assert res3.status == 400
+  end
+
+  test "in-process web request: catch exceptions raised by badly implemented error handlers" do
+    res1 = ReqInProcess.get("/exception?raise=true")
+    assert res1.status == 500
+
+    res2 = ReqInProcess.get("/no_route_matches?raise=true")
+    assert res2.status == 400
+
+    res3 = ReqInProcess.post("/json?raise=true", "invalid JSON", %{"content-type" => "application/json"})
     assert res3.status == 400
   end
 
@@ -55,6 +92,19 @@ defmodule Testgear.ErrorHandlerTest do
     end)
   end
 
+  test "in-process web request: badly implemented controller action should result in an error" do
+    [
+      "/incorrect_return",
+      "/missing_status_code",
+      "/illegal_resp_body",
+    ]
+    |> Enum.each(fn path ->
+      res = ReqInProcess.get(path)
+      assert res.status == 500
+      assert res.body   == Poison.encode!(%{"from" => "custom_error_handler: error"})
+    end)
+  end
+
   test "web request: return 500 if a status code, which shouldn't have body, returns body" do
     [
       "/json_with_status?status=100",
@@ -64,6 +114,18 @@ defmodule Testgear.ErrorHandlerTest do
     ]
     |> Enum.each(fn path ->
       res = Req.get(path)
+      assert res.status == 500
+    end)
+  end
+
+  test "in-process web request: return 500 if a status code, which shouldn't have body, returns body" do
+    [
+      "/json_with_status?status=100",
+      "/json_with_status?status=204",
+      "/json_with_status?status=304",
+    ]
+    |> Enum.each(fn path ->
+      res = ReqInProcess.get(path)
       assert res.status == 500
     end)
   end
@@ -138,6 +200,12 @@ defmodule Testgear.ErrorHandlerTest do
 
   test "execute custom error handler when parameter validation fails" do
     res = Req.post_json("/params_validation/invalid", %{})
+    assert res.status == 400
+    assert %{"error" => "testgear_parameter_validation_error"} = Poison.decode!(res.body)
+  end
+
+  test "in-process: execute custom error handler when parameter validation fails" do
+    res = ReqInProcess.post_json("/params_validation/invalid", %{})
     assert res.status == 400
     assert %{"error" => "testgear_parameter_validation_error"} = Poison.decode!(res.body)
   end

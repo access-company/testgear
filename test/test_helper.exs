@@ -3,6 +3,9 @@
 Antikythera.Test.Config.init()
 Antikythera.Test.GearConfigHelper.set_config(%{"BASIC_AUTHENTICATION_ID" => "admin", "BASIC_AUTHENTICATION_PW" => "password"})
 
+# Prepare modules that tests replace with Mimic mocks (see test/mimic_test.exs).
+Mimic.copy(Testgear.Greeter)
+
 defmodule Req do
   use Antikythera.Test.HttpClient
 end

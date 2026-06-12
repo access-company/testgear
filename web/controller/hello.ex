@@ -64,6 +64,10 @@ defmodule Testgear.Controller.Hello do
     Conn.json(conn, 200, %{})
   end
 
+  def greeting(conn) do
+    Conn.json(conn, 200, %{message: Testgear.Greeter.greeting(), pid: inspect(self())})
+  end
+
   def auth_greeting(%Conn{request: request} = conn) do
     case request.headers["authorization"] do
       "Bearer mykey_" <> username when username != "" ->

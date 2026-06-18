@@ -31,6 +31,7 @@ defmodule Testgear.Router do
   get  "/streaming_no_body"       , Hello, :streaming_no_body, streaming: true
   get  "/store_pid"               , Hello, :store_pid
   get  "/auth_greeting"           , Hello, :auth_greeting
+  get  "/greeting"                , Hello, :greeting
 
   get  "/priv_file/*file", StaticAsset, :send_priv_file
   get  "/asset_urls"     , StaticAsset, :urls

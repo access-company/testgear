@@ -44,3 +44,9 @@ defmodule OpenApiAssertNoNull do
     yaml_files: ["doc/api/openapi_one.yaml"],
     allows_null_for_optional: false
 end
+
+defmodule OpenApiAssertInProcess do
+  use Antikythera.Test.OpenApiAssertHelper,
+    yaml_files: ["doc/api/openapi_one.yaml"],
+    client: Antikythera.Test.InProcessClient
+end

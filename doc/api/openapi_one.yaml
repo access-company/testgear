@@ -326,6 +326,21 @@ paths:
                 allOf:
                   - $ref: "#/components/schemas/allOfOne"
                   - $ref: "#/components/schemas/allOfTwo"
+  "/store_pid":
+    get:
+      operationId: storePid
+      summary: API for testing in-process execution
+      description: |
+        Endpoint used by tests to verify that the controller action runs in the
+        same process as the test when driven by Antikythera.Test.InProcessClient.
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
 components:
   parameters:
     queryRef:

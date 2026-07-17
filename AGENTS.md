@@ -40,7 +40,6 @@ Code layout:
 | Install dependencies | `mix deps.get && mix deps.get` |
 | Compile | `mix compile` |
 | Run (interactive shell) | `iex -S mix` |
-| Format | `mix format` |
 | Test (whitebox) | `mix test` |
 | Typecheck | `mix dialyzer` |
 | Static code analysis | `mix credo -a --strict` |

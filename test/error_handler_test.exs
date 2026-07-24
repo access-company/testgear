@@ -160,8 +160,8 @@ defmodule Testgear.ErrorHandlerTest do
   end
 
   test "g2g request: catch exceptions raised by badly implemented error handlers" do
-    conn_base = ConnHelper.make_conn(sender: {:gear, :testgear}, query_params: %{"raise" => "true"})
-    req_base  = conn_base.request
+    %Conn{} = conn_base = ConnHelper.make_conn(sender: {:gear, :testgear}, query_params: %{"raise" => "true"})
+    %Request{} = req_base = conn_base.request
 
     res1 = %Conn{conn_base | request: %Request{req_base | path_info: ["exception"]}} |> Testgear.G2g.send()
     assert res1.status == 500

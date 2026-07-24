@@ -87,7 +87,7 @@ defmodule Testgear.Controller.Mcp do
     handle_mcp_request(conn)
   end
 
-  defun handle_testgear_tool(conn :: Conn.t, arguments :: map) :: map do
+  defun handle_testgear_tool(%Conn{request: %Request{} = request} = conn :: Conn.t, arguments :: map) :: map do
     data = arguments["data"] || "hoge"
 
     path = Testgear.Router.content_decoding_path()
@@ -96,7 +96,7 @@ defmodule Testgear.Controller.Mcp do
     conn2 = %Conn{
       conn |
       request: %Request{
-        conn.request |
+        request |
         method: :post,
         path_info: path_info,
         body: data
@@ -107,11 +107,11 @@ defmodule Testgear.Controller.Mcp do
     McpServerHelper.response_text("API Response (#{status}): #{response_body} from G2G")
   end
 
-  defun handle_json_tool(conn :: Conn.t, _arguments :: map) :: map do
+  defun handle_json_tool(%Conn{request: %Request{} = request} = conn :: Conn.t, _arguments :: map) :: map do
     conn2 = %Conn{
       conn |
       request: %Request{
-        conn.request |
+        request |
         method: :get,
         path_info: ["json"]
       }
@@ -124,11 +124,11 @@ defmodule Testgear.Controller.Mcp do
     })
   end
 
-  defun handle_auth_greeting_tool(conn :: Conn.t, _arguments :: map) :: map do
+  defun handle_auth_greeting_tool(%Conn{request: %Request{} = request} = conn :: Conn.t, _arguments :: map) :: map do
     conn2 = %Conn{
       conn |
       request: %Request{
-        conn.request |
+        request |
         method: :get,
         path_info: ["auth_greeting"]
       }

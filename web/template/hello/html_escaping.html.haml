@@ -6,5 +6,5 @@
   - if byte_size(param) == 0 do
     assuming param is nonempty string, this shouldn't appear; nor should "nil"
   = raw "<raw content shouldn't be escaped>"
-  = 'charlist literal'
+  = ~c"charlist literal"
   = String.to_charlist("dynamic charlist")

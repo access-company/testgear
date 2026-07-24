@@ -80,6 +80,6 @@ Follow Antikythera's [`STYLE_GUIDE.md`](https://github.com/access-company/antiky
 A change is done only when **all** of the following pass, in order:
 
 1. **Run tests:** `mix test` (and `TEST_MODE=blackbox_local mix test` when behavior is exercised through the running gear) — all green.
-2. **Lint / typecheck:** `mix format`, `mix compile`, `mix credo -a --strict`, and `mix dialyzer` produce no new warnings or errors. Run `markdownlint-cli2 --fix "**/*.md"` when Markdown files changed.
+2. **Lint / typecheck:** `mix compile`, `mix credo -a --strict`, and `mix dialyzer` produce no new warnings or errors. Run `markdownlint-cli2 --fix "**/*.md"` when Markdown files changed.
 3. **Review:** self-review the diff against the **Reviewer checklist** in [Development Rules](#development-rules) and confirm every item.
 4. **Re-verify:** if steps 2 or 3 modified any files, **re-run** the relevant tests, linting, and typechecking until they pass again.

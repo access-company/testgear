@@ -37,7 +37,7 @@ defmodule Testgear.Controller.Hello do
     Conn.json(conn, 200, %{request: req_map, context: ctx_map})
   end
 
-  def json_via_g2g(%Conn{request: req} = conn) do
+  def json_via_g2g(%Conn{request: %Request{} = req} = conn) do
     conn2 = %Conn{conn | request: %Request{req | path_info: ["json"]}}
     %G2gResponse{status: status, body: body} = Testgear.G2g.send(conn2)
     Conn.json(conn, status, body)

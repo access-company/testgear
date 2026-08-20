@@ -93,11 +93,11 @@ defmodule Testgear.Controller.Error do
     Conn.json(conn, status, %{})
   end
 
-  def missing_status_code(conn) do
+  def missing_status_code(%Conn{} = conn) do
     %Conn{conn | resp_body: "missing_status_code"}
   end
 
-  def illegal_resp_body(conn) do
+  def illegal_resp_body(%Conn{} = conn) do
     %Conn{conn | status: 200, resp_body: %{"resp_body can't be a map" => "should instead be a binary"}}
   end
 

@@ -6,7 +6,7 @@ defmodule Testgear.HttpcTest do
 
   @base_url Antikythera.Test.Config.base_url()
 
-  defp remove_extra_headers(res) do
+  defp remove_extra_headers(%Httpc.Response{} = res) do
     %Httpc.Response{res | headers: Map.drop(res.headers, ["date", "connection"])}
   end
 
